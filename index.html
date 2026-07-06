@@ -233,6 +233,147 @@
   .more-row{opacity:0.7;}
   .more-row .spec-code{color:var(--copper-bright);}
 
+  /* ==== INFO HUB / TABS ==== */
+  .info-hub{
+    position:relative;
+    z-index:1;
+    max-width:1280px;
+    margin:0 auto;
+    padding:20px 48px 80px;
+  }
+  .tabs-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:40px;
+  }
+  .tab-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.04em;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:11px 18px;
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .tab-btn:hover{color:var(--text); border-color:var(--teal-dim);}
+  .tab-btn.active{
+    color:var(--bg);
+    background:var(--teal);
+    border-color:var(--teal);
+    font-weight:600;
+  }
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block; animation:tabFade .35s ease;}
+  @keyframes tabFade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* teacher cards */
+  .teacher-grid{display:flex; flex-direction:column; gap:22px;}
+  .teacher-card{
+    display:flex;
+    gap:26px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    padding:24px;
+    flex-wrap:wrap;
+  }
+  .photo-placeholder{
+    width:140px; height:175px;
+    flex-shrink:0;
+    border:1px dashed var(--line);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-align:center;
+    padding:10px;
+  }
+  .photo-placeholder svg{width:30px; height:30px; opacity:0.5;}
+  .teacher-info{flex:1; min-width:240px;}
+  .teacher-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:19px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .teacher-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--copper-bright);
+    margin-bottom:14px;
+  }
+  .teacher-edu{font-size:14px; color:var(--text); line-height:1.55; margin-bottom:14px;}
+  .teacher-edu span{color:var(--muted);}
+  .teacher-quals{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.6;
+    margin-bottom:16px;
+    border-left:2px solid var(--line);
+    padding-left:12px;
+  }
+  .subject-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .subject-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--teal);
+    border:1px solid var(--teal-dim);
+    padding:5px 10px;
+  }
+
+  /* generic info list (dorm / life / practice) */
+  .info-list{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .info-list li{
+    font-size:14.5px;
+    line-height:1.55;
+    color:var(--text);
+    padding-left:18px;
+    position:relative;
+  }
+  .info-list li::before{
+    content:'▸';
+    position:absolute; left:0; top:0;
+    color:var(--teal);
+  }
+  .tab-lede{font-size:15px; line-height:1.65; color:var(--muted); max-width:64ch; margin-bottom:24px;}
+  .tab-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:20px 30px; margin-bottom:30px;}
+
+  /* schedule table */
+  .schedule-table{width:100%; border-collapse:collapse; margin-bottom:16px; font-size:13.5px;}
+  .schedule-table th, .schedule-table td{
+    border:1px solid var(--line);
+    padding:10px 12px;
+    text-align:left;
+  }
+  .schedule-table th{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    background:var(--panel);
+  }
+  .schedule-table td{color:var(--text);}
+  .schedule-note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    opacity:0.8;
+  }
+
+  @media (max-width: 700px){
+    .info-hub{padding-left:22px; padding-right:22px;}
+    .teacher-card{flex-direction:column; align-items:flex-start;}
+    .photo-placeholder{width:100px; height:125px;}
+    .schedule-table{font-size:12px;}
+  }
+
   /* ==== CIRCUIT BOARD / STUDENTS SECTION ==== */
   .board-section{
     position:relative;
@@ -748,6 +889,7 @@
   <nav>
     <a href="#about">Про коледж</a>
     <a href="#specialties">Спеціальності</a>
+    <a href="#info-hub">Довідник</a>
     <a href="#students">Здобувачі</a>
     <a href="#apply">Вступ 2026</a>
   </nav>
@@ -843,6 +985,187 @@
         <span class="spec-tag">та інші</span>
       </div>
     </div>
+  </section>
+
+  <section class="info-hub" id="info-hub">
+    <div class="board-heading">
+      <h2>Довідник для абітурієнтів і студентів</h2>
+      <span class="tag">// ОБЕРИ ВКЛАДКУ</span>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="teachers" onclick="switchTab('teachers')">Викладачі</button>
+      <button class="tab-btn" data-tab="scholarship" onclick="switchTab('scholarship')">Стипендія</button>
+      <button class="tab-btn" data-tab="dorm" onclick="switchTab('dorm')">Гуртожиток</button>
+      <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">Розклад</button>
+      <button class="tab-btn" data-tab="life" onclick="switchTab('life')">Студентське життя</button>
+      <button class="tab-btn" data-tab="practice" onclick="switchTab('practice')">Практика</button>
+    </div>
+
+    <!-- ВИКЛАДАЧІ -->
+    <div class="tab-panel active" id="tab-teachers">
+      <p class="tab-lede">Викладачі коледжу — з дійсними кваліфікаційними категоріями та реальним досвідом у виробництві й освіті.</p>
+      <div class="teacher-grid">
+
+        <div class="teacher-card">
+          <div class="photo-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <span>ФОТО<br>БУДЕ ДОДАНО</span>
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Василець Тетяна Олександрівна</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії</div>
+            <div class="teacher-edu"><span>Освіта:</span> Сумський державний педагогічний інститут ім. А.С. Макаренка, 1997 р. — вчитель української мови та літератури, зарубіжної літератури.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СОІППО від 14.02.2020 (ПК 02139771 15323-20); сертифікат СОІППО від 20.10.2021 (№ПК02139771 21875-21); свідоцтво СумДУ від 03.02.2022 (СП №04408289/0168-22).
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Українська мова і література</span>
+              <span class="subject-tag">Професійна освіта. Зварювання</span>
+              <span class="subject-tag">Професійна освіта. Електротехніка</span>
+              <span class="subject-tag">Фінанси і кредит</span>
+              <span class="subject-tag">Техніка та енергетика аграрного виробництва</span>
+              <span class="subject-tag">Соціальна робота</span>
+              <span class="subject-tag">Будівництво та експлуатація будівель і споруд</span>
+              <span class="subject-tag">Економіка підприємства</span>
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <div class="photo-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <span>ФОТО<br>БУДЕ ДОДАНО</span>
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Бараболіков Віталій Михайлович</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії, викладач-методист</div>
+            <div class="teacher-edu"><span>Освіта:</span> Українська інженерно-педагогічна академія, 1999 р. — інженер-педагог.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СумДУ від 24.06.2021 (СС № 05408289/2248-21). Кваліфікація: «Автоматизовані системи управління промисловими установками»; професійна освіта — комп'ютерні технології.
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+              <span class="subject-tag">Комп'ютерні технології</span>
+              <span class="subject-tag">Автоматизовані системи управління</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <div class="photo-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <span>ФОТО<br>БУДЕ ДОДАНО</span>
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Струк Михайло Володимирович</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії, старший викладач</div>
+            <div class="teacher-edu"><span>Освіта:</span> Львівський державний університет ім. Івана Франка, 1973 р. — фізик, викладач фізики.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СОІППО від 14.02.2020 (ПК 02139771 15294-20).
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Фізика</span>
+              <span class="subject-tag">Професійна освіта. Транспорт</span>
+              <span class="subject-tag">Комп'ютерні технології</span>
+              <span class="subject-tag">Техніка та енергетика аграрного виробництва</span>
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- СТИПЕНДІЯ -->
+    <div class="tab-panel" id="tab-scholarship">
+      <p class="tab-lede">Стипендіальне забезпечення здобувачів формується відповідно до чинного законодавства та рішень стипендіальної комісії коледжу.</p>
+      <div class="spec-grid">
+        <div class="spec-row">
+          <span class="spec-code">АКАД</span>
+          <span class="spec-name">Академічна стипендія — за результатами сесії, без трійок</span>
+          <span class="spec-tag">базовий рівень</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">ПІДВ</span>
+          <span class="spec-name">Підвищена стипендія — за відмінне навчання та участь в олімпіадах/конкурсах</span>
+          <span class="spec-tag">+ бонус</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">СОЦ</span>
+          <span class="spec-name">Соціальна стипендія — для пільгових категорій (сироти, ВПО, учасники бойових дій та їхні діти тощо)</span>
+          <span class="spec-tag">незалежно від оцінок</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">ІМЕН</span>
+          <span class="spec-name">Іменні та одноразові стипендії — за особливі досягнення в навчанні, спорті, творчості</span>
+          <span class="spec-tag">за рішенням комісії</span>
+        </div>
+      </div>
+      <p class="schedule-note" style="margin-top:18px;">Точні розміри виплат встановлюються стипендіальною комісією щосеместру відповідно до бюджету коледжу — актуальні суми уточнюйте у навчальній частині.</p>
+    </div>
+
+    <!-- ГУРТОЖИТОК -->
+    <div class="tab-panel" id="tab-dorm">
+      <p class="tab-lede">Іногороднім здобувачам коледж надає місце в гуртожитку на весь період навчання.</p>
+      <div class="tab-stats">
+        <div class="stat"><b>450₴</b><span>орієнтовно / міс.</span></div>
+        <div class="stat"><b>2–3</b><span>місця в кімнаті</span></div>
+        <div class="stat"><b>Wi-Fi</b><span>у кожному блоці</span></div>
+        <div class="stat"><b>5 хв</b><span>пішки до навчального корпусу</span></div>
+      </div>
+      <ul class="info-list">
+        <li>Кімнати на 2–3 особи, спільна кухня та санвузол на поверсі</li>
+        <li>Цілодобова вахта та пропускний режим для безпеки мешканців</li>
+        <li>Можливість поселення разом із одногрупниками за заявою</li>
+        <li>Прибирання місць загального користування — за графіком чергувань</li>
+      </ul>
+    </div>
+
+    <!-- РОЗКЛАД -->
+    <div class="tab-panel" id="tab-schedule">
+      <p class="tab-lede">Орієнтовна структура навчального дня — приклад для ілюстрації. Актуальний розклад пар публікується на дошці оголошень та в групах старост.</p>
+      <table class="schedule-table">
+        <thead>
+          <tr><th>Пара</th><th>Час</th><th>Пн–Пт</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>08:30–09:50</td><td>Загальноосвітні / фахові дисципліни</td></tr>
+          <tr><td>2</td><td>10:00–11:20</td><td>Фахові дисципліни</td></tr>
+          <tr><td>—</td><td>11:20–12:00</td><td>Обідня перерва</td></tr>
+          <tr><td>3</td><td>12:00–13:20</td><td>Практичні / лабораторні заняття</td></tr>
+          <tr><td>4</td><td>13:30–14:50</td><td>Факультативи / гуртки</td></tr>
+        </tbody>
+      </table>
+      <p class="schedule-note">Розклад може відрізнятись залежно від курсу, спеціальності та тижня (чисельник/знаменник).</p>
+    </div>
+
+    <!-- СТУДЕНТСЬКЕ ЖИТТЯ -->
+    <div class="tab-panel" id="tab-life">
+      <p class="tab-lede">Навчання — це не тільки пари. У коледжі є простір для власних проєктів, змагань і спільноти.</p>
+      <ul class="info-list">
+        <li>Гурток програмування та робототехніки — власні pet-проєкти, участь у хакатонах</li>
+        <li>Секція з електротехніки — практичні збірки схем, ремонт техніки для потреб коледжу</li>
+        <li>Спортивні секції: футбол, настільний теніс, легка атлетика</li>
+        <li>Студентське самоврядування — своя думка щодо життя коледжу має вагу</li>
+        <li>Творчі заходи: КВК, конкурси, тематичні вечори між групами</li>
+        <li>Волонтерські ініціативи та участь у міських заходах</li>
+      </ul>
+    </div>
+
+    <!-- ПРАКТИКА -->
+    <div class="tab-panel" id="tab-practice">
+      <p class="tab-lede">Практика — обов'язкова частина навчання для всіх спеціальностей, з реальними задачами, а не просто «для галочки».</p>
+      <ul class="info-list">
+        <li>IT-спеціальності — практика в командах розробки, участь у реальних pet- та комерційних проєктах</li>
+        <li>Електротехніка та машинобудування — практика на виробничих підприємствах регіону</li>
+        <li>Педагогічні спеціальності — практика в школах та закладах дошкільної освіти</li>
+        <li>Керівник практики закріплюється за кожною групою для супроводу та звітності</li>
+        <li>За результатами практики — характеристика, яка враховується при працевлаштуванні</li>
+      </ul>
+    </div>
+
   </section>
 
   <section class="board-section" id="students">
@@ -1130,6 +1453,14 @@
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') closeModal();
   });
+
+  // ==== INFO HUB TABS ====
+  function switchTab(name){
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelector('.tab-btn[data-tab="' + name + '"]').classList.add('active');
+  }
 
   // ==== APPLICATION FORM ====
   const applicationForm = document.getElementById('applicationForm');
