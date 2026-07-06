@@ -684,6 +684,58 @@
     .apply-form-section{padding-left:22px; padding-right:22px;}
   }
 
+  /* ==== CONTACTS ==== */
+  .contacts-section{
+    position:relative;
+    z-index:1;
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 48px 90px;
+  }
+  .contacts-inner{
+    border:1px solid var(--line);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .contacts-col{padding:36px 40px;}
+  .contacts-col:first-child{border-right:1px solid var(--line);}
+  .contact-line{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .contact-line:last-child{border-bottom:none;}
+  .contact-line span:first-child{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .contact-line a, .contact-line b{color:var(--text); text-align:right; font-weight:500;}
+  .contact-line a{text-decoration:none;}
+  .contact-line a:hover{color:var(--teal);}
+  .social-row{display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;}
+  .social-row a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--teal);
+    border:1px solid var(--teal-dim);
+    padding:8px 14px;
+    text-decoration:none;
+    transition:background .2s ease, color .2s ease;
+  }
+  .social-row a:hover{background:var(--teal); color:var(--bg);}
+
+  @media (max-width: 700px){
+    .contacts-section{padding-left:22px; padding-right:22px;}
+    .contacts-inner{grid-template-columns:1fr;}
+    .contacts-col:first-child{border-right:none; border-bottom:1px solid var(--line);}
+  }
+
   /* ==== MODAL ==== */
   .modal-overlay{
     position:fixed; inset:0;
@@ -891,6 +943,7 @@
     <a href="#specialties">Спеціальності</a>
     <a href="#info-hub">Довідник</a>
     <a href="#students">Здобувачі</a>
+    <a href="#contacts">Контакти</a>
     <a href="#apply">Вступ 2026</a>
   </nav>
   <div>м. Конотоп</div>
@@ -926,14 +979,14 @@
       <div class="about-col">
         <div class="eyebrow" style="margin-bottom:16px;">Хто ми</div>
         <p class="lede" style="max-width:38ch;">
-          Фаховий коледж повного циклу: від вступного тесту до диплома, який відкриває двері у виробництво, енергетику, IT та освіту. Тут вчать не «на оцінку», а на реальний результат — стажування, практика на підприємствах, живі проєкти.
+          Інноваційний багатопрофільний заклад фахової передвищої освіти — відокремлений структурний підрозділ Сумського державного університету. Готує фахових молодших бакалаврів за 12 спеціальностями: від IT та електротехніки до будівництва, фінансів і соціальної роботи.
         </p>
       </div>
       <div class="about-stats">
         <div class="stat"><b>12</b><span>спеціальностей</span></div>
-        <div class="stat"><b>450₴</b><span>гуртожиток / міс.</span></div>
-        <div class="stat"><b>100%</b><span>практика на підприємствах</span></div>
-        <div class="stat"><b>СумДУ</b><span>у складі університету</span></div>
+        <div class="stat"><b>ФМБ</b><span>ступінь: фаховий мол. бакалавр</span></div>
+        <div class="stat"><b>СумДУ</b><span>відокремлений підрозділ університету</span></div>
+        <div class="stat"><b>Конотоп</b><span>вул. М. Немолота, 12</span></div>
       </div>
     </div>
   </section>
@@ -941,48 +994,74 @@
   <section class="specialties-section" id="specialties">
     <div class="board-heading">
       <h2>Спеціальності коледжу</h2>
-      <span class="tag">// ФАХОВИЙ МОЛОДШИЙ БАКАЛАВР</span>
+      <span class="tag">// ФАХОВИЙ МОЛОДШИЙ БАКАЛАВР · 12 СПЕЦІАЛЬНОСТЕЙ</span>
     </div>
+
+    <p class="tab-lede" style="margin-bottom:18px;">Для випускників 9–11 класів:</p>
     <div class="spec-grid">
       <div class="spec-row">
-        <span class="spec-code">121</span>
+        <span class="spec-code">01</span>
         <span class="spec-name">Інженерія програмного забезпечення</span>
         <span class="spec-tag">IT · код</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">141</span>
-        <span class="spec-name">Електроенергетика, електротехніка та електромеханіка</span>
+        <span class="spec-code">02</span>
+        <span class="spec-name">Електрична інженерія</span>
         <span class="spec-tag">струм · схеми</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">133</span>
-        <span class="spec-name">Галузеве машинобудування</span>
-        <span class="spec-tag">верстати · метал</span>
+        <span class="spec-code">03</span>
+        <span class="spec-name">Будівництво та цивільна інженерія</span>
+        <span class="spec-tag">будівництво</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">151</span>
-        <span class="spec-name">Автоматизація та комп'ютерно-інтегровані технології</span>
-        <span class="spec-tag">роботи · контролери</span>
+        <span class="spec-code">04</span>
+        <span class="spec-name">Автомобільний транспорт</span>
+        <span class="spec-tag">транспорт</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">013</span>
-        <span class="spec-name">Початкова освіта</span>
-        <span class="spec-tag">педагогіка</span>
+        <span class="spec-code">05</span>
+        <span class="spec-name">Фінанси, банківська справа, страхування та фондовий ринок</span>
+        <span class="spec-tag">економіка</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">015</span>
-        <span class="spec-name">Професійна освіта (за спеціалізаціями)</span>
-        <span class="spec-tag">педагогіка</span>
+        <span class="spec-code">06</span>
+        <span class="spec-name">Соціальна робота та консультування</span>
+        <span class="spec-tag">соц. сфера</span>
       </div>
       <div class="spec-row">
-        <span class="spec-code">073</span>
-        <span class="spec-name">Менеджмент</span>
+        <span class="spec-code">07</span>
+        <span class="spec-name">Торгівля</span>
         <span class="spec-tag">бізнес</span>
       </div>
-      <div class="spec-row more-row">
-        <span class="spec-code">+5</span>
-        <span class="spec-name">Ще спеціальностей — повний перелік у приймальній комісії коледжу</span>
-        <span class="spec-tag">та інші</span>
+    </div>
+
+    <p class="tab-lede" style="margin:26px 0 18px;">Для випускників ДПТНЗ (професійна освіта):</p>
+    <div class="spec-grid">
+      <div class="spec-row">
+        <span class="spec-code">08</span>
+        <span class="spec-name">Професійна освіта. Цифрові технології</span>
+        <span class="spec-tag">IT</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-code">09</span>
+        <span class="spec-name">Професійна освіта. Електротехніка</span>
+        <span class="spec-tag">струм · схеми</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-code">10</span>
+        <span class="spec-name">Професійна освіта. Зварювання</span>
+        <span class="spec-tag">метал</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-code">11</span>
+        <span class="spec-name">Професійна освіта. Будівництво</span>
+        <span class="spec-tag">будівництво</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-code">12</span>
+        <span class="spec-name">Професійна освіта. Транспорт</span>
+        <span class="spec-tag">транспорт</span>
       </div>
     </div>
   </section>
@@ -999,6 +1078,7 @@
       <button class="tab-btn" data-tab="dorm" onclick="switchTab('dorm')">Гуртожиток</button>
       <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">Розклад</button>
       <button class="tab-btn" data-tab="life" onclick="switchTab('life')">Студентське життя</button>
+      <button class="tab-btn" data-tab="alumni" onclick="switchTab('alumni')">Гордість коледжу</button>
       <button class="tab-btn" data-tab="practice" onclick="switchTab('practice')">Практика</button>
     </div>
 
@@ -1080,46 +1160,40 @@
 
     <!-- СТИПЕНДІЯ -->
     <div class="tab-panel" id="tab-scholarship">
-      <p class="tab-lede">Стипендіальне забезпечення здобувачів формується відповідно до чинного законодавства та рішень стипендіальної комісії коледжу.</p>
+      <p class="tab-lede">Стипендіальне забезпечення нараховується за рейтингом успішності — окремо для кожного курсу навчання.</p>
       <div class="spec-grid">
         <div class="spec-row">
-          <span class="spec-code">АКАД</span>
-          <span class="spec-name">Академічна стипендія — за результатами сесії, без трійок</span>
-          <span class="spec-tag">базовий рівень</span>
+          <span class="spec-code">1 к.</span>
+          <span class="spec-name">Рейтинг 1 курсу</span>
+          <span class="spec-tag">за результатами сесії</span>
         </div>
         <div class="spec-row">
-          <span class="spec-code">ПІДВ</span>
-          <span class="spec-name">Підвищена стипендія — за відмінне навчання та участь в олімпіадах/конкурсах</span>
-          <span class="spec-tag">+ бонус</span>
+          <span class="spec-code">2 к.</span>
+          <span class="spec-name">Рейтинг 2 курсу + професійна освіта</span>
+          <span class="spec-tag">за результатами сесії</span>
         </div>
         <div class="spec-row">
-          <span class="spec-code">СОЦ</span>
-          <span class="spec-name">Соціальна стипендія — для пільгових категорій (сироти, ВПО, учасники бойових дій та їхні діти тощо)</span>
-          <span class="spec-tag">незалежно від оцінок</span>
+          <span class="spec-code">3 к.</span>
+          <span class="spec-name">Рейтинг 3 курсу + професійна освіта</span>
+          <span class="spec-tag">за результатами сесії</span>
         </div>
         <div class="spec-row">
-          <span class="spec-code">ІМЕН</span>
-          <span class="spec-name">Іменні та одноразові стипендії — за особливі досягнення в навчанні, спорті, творчості</span>
-          <span class="spec-tag">за рішенням комісії</span>
+          <span class="spec-code">4 к.</span>
+          <span class="spec-name">Рейтинг 4 курсу</span>
+          <span class="spec-tag">за результатами сесії</span>
         </div>
       </div>
-      <p class="schedule-note" style="margin-top:18px;">Точні розміри виплат встановлюються стипендіальною комісією щосеместру відповідно до бюджету коледжу — актуальні суми уточнюйте у навчальній частині.</p>
+      <p class="schedule-note" style="margin-top:18px;">Актуальні рейтингові списки за кожним курсом публікуються окремо у розділі «Стипендіальне забезпечення» на офіційному сайті коледжу.</p>
     </div>
 
     <!-- ГУРТОЖИТОК -->
     <div class="tab-panel" id="tab-dorm">
-      <p class="tab-lede">Іногороднім здобувачам коледж надає місце в гуртожитку на весь період навчання.</p>
-      <div class="tab-stats">
-        <div class="stat"><b>450₴</b><span>орієнтовно / міс.</span></div>
-        <div class="stat"><b>2–3</b><span>місця в кімнаті</span></div>
-        <div class="stat"><b>Wi-Fi</b><span>у кожному блоці</span></div>
-        <div class="stat"><b>5 хв</b><span>пішки до навчального корпусу</span></div>
-      </div>
+      <p class="tab-lede">Іногороднім здобувачам коледж надає місце в гуртожитку на весь період навчання — гуртожитки входять до матеріальної бази коледжу.</p>
       <ul class="info-list">
-        <li>Кімнати на 2–3 особи, спільна кухня та санвузол на поверсі</li>
-        <li>Цілодобова вахта та пропускний режим для безпеки мешканців</li>
+        <li>Поселення на весь термін навчання для іногородніх здобувачів</li>
+        <li>У гуртожитках проводиться виховна робота та підтримка мешканців</li>
         <li>Можливість поселення разом із одногрупниками за заявою</li>
-        <li>Прибирання місць загального користування — за графіком чергувань</li>
+        <li>Точні умови, вартість і наявність місць — уточнюйте у приймальній комісії</li>
       </ul>
     </div>
 
@@ -1143,25 +1217,37 @@
 
     <!-- СТУДЕНТСЬКЕ ЖИТТЯ -->
     <div class="tab-panel" id="tab-life">
-      <p class="tab-lede">Навчання — це не тільки пари. У коледжі є простір для власних проєктів, змагань і спільноти.</p>
+      <p class="tab-lede">Навчання — це не тільки пари. У коледжі діє мережа підтримки та простір для творчості й ініціативи.</p>
       <ul class="info-list">
-        <li>Гурток програмування та робототехніки — власні pet-проєкти, участь у хакатонах</li>
-        <li>Секція з електротехніки — практичні збірки схем, ремонт техніки для потреб коледжу</li>
-        <li>Спортивні секції: футбол, настільний теніс, легка атлетика</li>
         <li>Студентське самоврядування — своя думка щодо життя коледжу має вагу</li>
-        <li>Творчі заходи: КВК, конкурси, тематичні вечори між групами</li>
-        <li>Волонтерські ініціативи та участь у міських заходах</li>
+        <li>Гурток «Творчий простір» — творчі конкурси та проєкти студентів</li>
+        <li>Волонтерський центр «Добробут» — соціальні та волонтерські ініціативи</li>
+        <li>Психологічна служба: практичний психолог та соціальний педагог супроводжують здобувачів</li>
+        <li>Спортивні секції в межах фізичного виховання коледжу</li>
+        <li>Активна громадська позиція — з перших днів повномасштабної війни колектив коледжу долучився до волонтерських ініціатив на підтримку ЗСУ</li>
       </ul>
+    </div>
+
+    <!-- ГОРДІСТЬ КОЛЕДЖУ -->
+    <div class="tab-panel" id="tab-alumni">
+      <p class="tab-lede">Випускники, які продовжують справу коледжу в реальних професіях — приклад того, куди веде диплом ФМБ.</p>
+      <ul class="info-list">
+        <li><b>Артем Голінка</b> — Senior Front-end Developer у Genesis, розробка web та mobile додатків. Випускник 2016 р., спеціальність «Розробка програмного забезпечення»</li>
+        <li><b>Юлія Заярна</b> — соціальний педагог, КУСОР «Конотопський дитячий будинок-інтернат». Випускниця 2016 р., «Соціальна робота»</li>
+        <li><b>Юрій Білан</b> — начальник відділу освіти Дубов'язівської ОТГ. Випускник 2007 р.</li>
+        <li><b>Чечель Валерій</b> — директор державного професійно-технічного навчального закладу «Реутенський професійний аграрний ліцей». Випускник 1984 р.</li>
+      </ul>
+      <p class="schedule-note" style="margin-top:14px;">Повний перелік — у розділі «Гордість коледжу» на офіційному сайті.</p>
     </div>
 
     <!-- ПРАКТИКА -->
     <div class="tab-panel" id="tab-practice">
       <p class="tab-lede">Практика — обов'язкова частина навчання для всіх спеціальностей, з реальними задачами, а не просто «для галочки».</p>
       <ul class="info-list">
-        <li>IT-спеціальності — практика в командах розробки, участь у реальних pet- та комерційних проєктах</li>
-        <li>Електротехніка та машинобудування — практика на виробничих підприємствах регіону</li>
-        <li>Педагогічні спеціальності — практика в школах та закладах дошкільної освіти</li>
-        <li>Керівник практики закріплюється за кожною групою для супроводу та звітності</li>
+        <li>За кожною спеціальністю закріплені бази практик та договори про співпрацю з підприємствами</li>
+        <li>IT-спеціальності — практика в командах розробки, реальні проєкти</li>
+        <li>Електротехніка, будівництво, транспорт — практика на виробничих підприємствах регіону</li>
+        <li>Підрозділ зі сприяння працевлаштуванню випускників супроводжує здобувачів після завершення навчання</li>
         <li>За результатами практики — характеристика, яка враховується при працевлаштуванні</li>
       </ul>
     </div>
@@ -1266,13 +1352,18 @@
           <label for="specialty">Обрана спеціальність</label>
           <select id="specialty" name="specialty" required>
             <option value="" disabled selected>Оберіть спеціальність</option>
-            <option value="121 Інженерія програмного забезпечення">121 · Інженерія програмного забезпечення</option>
-            <option value="141 Електроенергетика, електротехніка та електромеханіка">141 · Електроенергетика, електротехніка та електромеханіка</option>
-            <option value="133 Галузеве машинобудування">133 · Галузеве машинобудування</option>
-            <option value="151 Автоматизація та КІТ">151 · Автоматизація та комп'ютерно-інтегровані технології</option>
-            <option value="013 Початкова освіта">013 · Початкова освіта</option>
-            <option value="015 Професійна освіта">015 · Професійна освіта</option>
-            <option value="073 Менеджмент">073 · Менеджмент</option>
+            <option value="Інженерія програмного забезпечення">Інженерія програмного забезпечення</option>
+            <option value="Електрична інженерія">Електрична інженерія</option>
+            <option value="Будівництво та цивільна інженерія">Будівництво та цивільна інженерія</option>
+            <option value="Автомобільний транспорт">Автомобільний транспорт</option>
+            <option value="Фінанси, банківська справа, страхування та фондовий ринок">Фінанси, банківська справа, страхування та фондовий ринок</option>
+            <option value="Соціальна робота та консультування">Соціальна робота та консультування</option>
+            <option value="Торгівля">Торгівля</option>
+            <option value="Професійна освіта. Цифрові технології">Професійна освіта. Цифрові технології</option>
+            <option value="Професійна освіта. Електротехніка">Професійна освіта. Електротехніка</option>
+            <option value="Професійна освіта. Зварювання">Професійна освіта. Зварювання</option>
+            <option value="Професійна освіта. Будівництво">Професійна освіта. Будівництво</option>
+            <option value="Професійна освіта. Транспорт">Професійна освіта. Транспорт</option>
             <option value="Інше / ще не визначився(лась)">Інше / ще не визначився(лась)</option>
           </select>
         </div>
@@ -1307,6 +1398,33 @@
         <h3>Заявку прийнято</h3>
         <p>Дякуємо! Приймальна комісія отримала твої дані та зв'яжеться найближчим часом. Слідкуй за поштою та телефоном, вказаними у заявці.</p>
         <a href="#apply-form" class="btn" onclick="resetForm(); return false;">Подати ще одну заявку</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contacts-section" id="contacts">
+    <div class="board-heading">
+      <h2>Контакти</h2>
+      <span class="tag">// ПРИЙМАЛЬНА КОМІСІЯ</span>
+    </div>
+    <div class="contacts-inner">
+      <div class="contacts-col">
+        <div class="contact-line"><span>Адреса</span><b>м. Конотоп, вул. М. Немолота, 12, Сумська обл.</b></div>
+        <div class="contact-line"><span>Телефон</span><a href="tel:80544723430">(05447) 2-34-30</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380984246275">098-424-62-75</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380500216390">050-021-63-90</a></div>
+        <div class="contact-line"><span>Факс</span><b>(05447) 2-62-52</b></div>
+      </div>
+      <div class="contacts-col">
+        <div class="contact-line"><span>Заклад</span><b>ВСП «КІПФК СумДУ»</b></div>
+        <div class="contact-line"><span>Сайт</span><a href="https://kipt.sumdu.edu.ua/uk/" target="_blank" rel="noopener">kipt.sumdu.edu.ua</a></div>
+        <div class="contact-line"><span>Ел. бібліотека</span><a href="https://lib.kipt.sumdu.edu.ua/" target="_blank" rel="noopener">lib.kipt.sumdu.edu.ua</a></div>
+        <div class="social-row">
+          <a href="https://www.facebook.com/groups/iptkisumdu/" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/kipfcsumdu/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://t.me/kip_fcsumdu" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://www.tiktok.com/@kipt_ua" target="_blank" rel="noopener">TikTok</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1347,7 +1465,7 @@
 </div>
 
 <footer>
-  <span>© ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ»</span>
+  <span>© ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ» · м. Конотоп, вул. М. Немолота, 12</span>
   <span>Прототип головного екрана · макет не є офіційним сайтом коледжу</span>
 </footer>
 
