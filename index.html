@@ -395,6 +395,154 @@
   }
   .apply-actions{display:flex; gap:14px; flex-wrap:wrap;}
 
+  /* ==== APPLY FORM ==== */
+  .apply-form-section{
+    position:relative;
+    z-index:1;
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 48px 100px;
+  }
+  .form-panel{
+    border:1px solid var(--line);
+    background:var(--panel);
+    padding:44px;
+    position:relative;
+    overflow:hidden;
+  }
+  .form-panel .pins{
+    position:absolute; left:-1px; right:-1px; top:-1px; height:3px;
+    background:repeating-linear-gradient(90deg, var(--teal-dim) 0 8px, transparent 8px 16px);
+  }
+  .form-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:32px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;
+  }
+  .form-head h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(20px, 2.4vw, 28px);
+    font-weight:600;
+  }
+  .form-head .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .app-form{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px 28px;
+  }
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .field input,
+  .field select,
+  .field textarea{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Manrope', sans-serif;
+    font-size:14.5px;
+    padding:12px 14px;
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+    width:100%;
+  }
+  .field select{
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0 L5 6 L10 0' fill='none' stroke='%238A97A0' stroke-width='1.4'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+    cursor:pointer;
+  }
+  .field textarea{resize:vertical; min-height:90px; font-family:'Manrope', sans-serif;}
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(63,184,175,0.12);
+  }
+  .field .hint{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    opacity:0.7;
+  }
+  .consent-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    grid-column:1 / -1;
+    font-size:12.5px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .consent-row input{
+    margin-top:3px;
+    accent-color:var(--copper);
+    width:16px; height:16px;
+    flex-shrink:0;
+  }
+  .form-submit-row{
+    grid-column:1 / -1;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .form-submit-row .btn{
+    border:none;
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .form-status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .form-success{
+    display:none;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+    padding:20px 0 6px;
+  }
+  .form-success.active{display:flex; animation:successFade .4s ease;}
+  .form-success .check{
+    width:38px; height:38px;
+    border:1px solid var(--teal);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--teal);
+    font-size:16px;
+  }
+  .form-success h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:19px;
+    font-weight:600;
+  }
+  .form-success p{font-size:13.5px; color:var(--muted); max-width:48ch; line-height:1.55;}
+  @keyframes successFade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  @media (max-width: 700px){
+    .app-form{grid-template-columns:1fr;}
+    .form-panel{padding:28px 22px;}
+    .apply-form-section{padding-left:22px; padding-right:22px;}
+  }
+
   /* ==== MODAL ==== */
   .modal-overlay{
     position:fixed; inset:0;
@@ -759,9 +907,83 @@
         <h2 class="apply-title">Твоє місце в майбутньому вже креслять.</h2>
       </div>
       <div class="apply-actions">
-        <a href="#" class="btn primary">Подати документи</a>
-        <a href="#" class="btn">Умови вступу</a>
-        <a href="#" class="btn">Написати приймальній комісії</a>
+        <a href="#apply-form" class="btn primary">Подати документи</a>
+        <a href="#specialties" class="btn">Умови вступу</a>
+        <a href="#apply-form" class="btn">Написати приймальній комісії</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="apply-form-section" id="apply-form">
+    <div class="form-panel">
+      <div class="pins"></div>
+      <div class="form-head">
+        <h2>Подати заявку на вступ</h2>
+        <span class="tag">// ФОРМА · ПРИЙМАЛЬНА КОМІСІЯ</span>
+      </div>
+
+      <form class="app-form" id="applicationForm">
+        <div class="field">
+          <label for="fio">ПІБ абітурієнта</label>
+          <input type="text" id="fio" name="fio" placeholder="Прізвище Ім'я По батькові" required>
+        </div>
+        <div class="field">
+          <label for="birth">Дата народження</label>
+          <input type="date" id="birth" name="birth" required>
+        </div>
+        <div class="field">
+          <label for="phone">Телефон</label>
+          <input type="tel" id="phone" name="phone" placeholder="+380 __ ___ __ __" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+        </div>
+        <div class="field full">
+          <label for="specialty">Обрана спеціальність</label>
+          <select id="specialty" name="specialty" required>
+            <option value="" disabled selected>Оберіть спеціальність</option>
+            <option value="121 Інженерія програмного забезпечення">121 · Інженерія програмного забезпечення</option>
+            <option value="141 Електроенергетика, електротехніка та електромеханіка">141 · Електроенергетика, електротехніка та електромеханіка</option>
+            <option value="133 Галузеве машинобудування">133 · Галузеве машинобудування</option>
+            <option value="151 Автоматизація та КІТ">151 · Автоматизація та комп'ютерно-інтегровані технології</option>
+            <option value="013 Початкова освіта">013 · Початкова освіта</option>
+            <option value="015 Професійна освіта">015 · Професійна освіта</option>
+            <option value="073 Менеджмент">073 · Менеджмент</option>
+            <option value="Інше / ще не визначився(лась)">Інше / ще не визначився(лась)</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="education">Освіта на момент вступу</label>
+          <select id="education" name="education" required>
+            <option value="" disabled selected>Оберіть варіант</option>
+            <option value="9 класів">9 класів</option>
+            <option value="11 класів">11 класів</option>
+            <option value="Диплом кваліфікованого робітника">Диплом кваліфікованого робітника</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="message">Коментар / питання до приймальної комісії</label>
+          <textarea id="message" name="message" placeholder="Наприклад: чи є місця в гуртожитку, які документи потрібні тощо"></textarea>
+          <span class="hint">необов'язкове поле</span>
+        </div>
+
+        <label class="consent-row">
+          <input type="checkbox" required>
+          Даю згоду на обробку персональних даних відповідно до Закону України «Про захист персональних даних» для цілей розгляду заявки на вступ.
+        </label>
+
+        <div class="form-submit-row">
+          <button type="submit" class="btn primary">Надіслати заявку →</button>
+          <span class="form-status">Відповідь приймальної комісії — протягом 1-2 робочих днів</span>
+        </div>
+      </form>
+
+      <div class="form-success" id="formSuccess">
+        <div class="check">✓</div>
+        <h3>Заявку прийнято</h3>
+        <p>Дякуємо! Приймальна комісія отримала твої дані та зв'яжеться найближчим часом. Слідкуй за поштою та телефоном, вказаними у заявці.</p>
+        <a href="#apply-form" class="btn" onclick="resetForm(); return false;">Подати ще одну заявку</a>
       </div>
     </div>
   </section>
@@ -908,6 +1130,40 @@
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') closeModal();
   });
+
+  // ==== APPLICATION FORM ====
+  const applicationForm = document.getElementById('applicationForm');
+  const formSuccess = document.getElementById('formSuccess');
+
+  applicationForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // NOTE: this is a static site (GitHub Pages) with no backend.
+    // To actually receive submissions by email, connect a free form backend,
+    // e.g. https://formspree.io — create a free form, then either:
+    //  1) set this form's action to your Formspree endpoint and remove
+    //     e.preventDefault() above, or
+    //  2) send via fetch() here using your endpoint, e.g.:
+    //
+    // fetch('https://formspree.io/f/YOUR_ID', {
+    //   method: 'POST',
+    //   headers: { 'Accept': 'application/json' },
+    //   body: new FormData(applicationForm)
+    // }).then(() => showSuccess());
+
+    showSuccess();
+  });
+
+  function showSuccess(){
+    applicationForm.style.display = 'none';
+    formSuccess.classList.add('active');
+  }
+
+  function resetForm(){
+    applicationForm.reset();
+    applicationForm.style.display = 'grid';
+    formSuccess.classList.remove('active');
+  }
 </script>
 
 </body>
