@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Довідник — ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="blueprint-grid"></div>
+<div class="corner-mark cm-tl"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-tr"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-bl"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-br"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+
+<header>
+  <div class="brandmark"><span class="dot"></span> КІПФК СУМДУ</div>
+  <nav>
+    <a href="index.html">Головна</a>
+    <a href="specialnosti.html">Спеціальності</a>
+    <a href="dovidnyk.html" style="color:var(--copper-bright);">Довідник</a>
+    <a href="vstup.html">Вступ 2026</a>
+    <a href="kontakty.html">Контакти</a>
+  </nav>
+  <div>м. Конотоп</div>
+</header>
+
+<main>
+  <section class="info-hub" id="info-hub">
+    <div class="board-heading">
+      <h2>Довідник для абітурієнтів і студентів</h2>
+      <span class="tag">// ОБЕРИ ВКЛАДКУ</span>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="teachers" onclick="switchTab('teachers')">Викладачі</button>
+      <button class="tab-btn" data-tab="allstaff" onclick="switchTab('allstaff')">Весь колектив</button>
+      <button class="tab-btn" data-tab="scholarship" onclick="switchTab('scholarship')">Стипендія</button>
+      <button class="tab-btn" data-tab="dorm" onclick="switchTab('dorm')">Гуртожиток</button>
+      <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">Розклад</button>
+      <button class="tab-btn" data-tab="life" onclick="switchTab('life')">Студентське життя</button>
+      <button class="tab-btn" data-tab="alumni" onclick="switchTab('alumni')">Гордість коледжу</button>
+      <button class="tab-btn" data-tab="practice" onclick="switchTab('practice')">Практика</button>
+    </div>
+
+    <!-- ВИКЛАДАЧІ -->
+    <div class="tab-panel active" id="tab-teachers">
+      <p class="tab-lede">Викладачі коледжу — з дійсними кваліфікаційними категоріями та реальним досвідом у виробництві й освіті.</p>
+      <div class="teacher-grid">
+
+        <div class="teacher-card">
+          <div class="teacher-photo">
+            <img src="images/teachers/vasylets.jpg" alt="Василець Тетяна Олександрівна">
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Василець Тетяна Олександрівна</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії</div>
+            <div class="teacher-edu"><span>Освіта:</span> Сумський державний педагогічний інститут ім. А.С. Макаренка, 1997 р. — вчитель української мови та літератури, зарубіжної літератури.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СОІППО від 14.02.2020 (ПК 02139771 15323-20); сертифікат СОІППО від 20.10.2021 (№ПК02139771 21875-21); свідоцтво СумДУ від 03.02.2022 (СП №04408289/0168-22).
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Українська мова і література</span>
+              <span class="subject-tag">Професійна освіта. Зварювання</span>
+              <span class="subject-tag">Професійна освіта. Електротехніка</span>
+              <span class="subject-tag">Фінанси і кредит</span>
+              <span class="subject-tag">Техніка та енергетика аграрного виробництва</span>
+              <span class="subject-tag">Соціальна робота</span>
+              <span class="subject-tag">Будівництво та експлуатація будівель і споруд</span>
+              <span class="subject-tag">Економіка підприємства</span>
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <div class="teacher-photo">
+            <img src="images/teachers/barabolikov.jpg" alt="Бараболіков Віталій Михайлович">
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Бараболіков Віталій Михайлович</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії, викладач-методист</div>
+            <div class="teacher-edu"><span>Освіта:</span> Українська інженерно-педагогічна академія, 1999 р. — інженер-педагог.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СумДУ від 24.06.2021 (СС № 05408289/2248-21). Кваліфікація: «Автоматизовані системи управління промисловими установками»; професійна освіта — комп'ютерні технології.
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+              <span class="subject-tag">Комп'ютерні технології</span>
+              <span class="subject-tag">Автоматизовані системи управління</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <div class="teacher-photo">
+            <img src="images/teachers/struk.jpg" alt="Струк Михайло Володимирович">
+          </div>
+          <div class="teacher-info">
+            <div class="teacher-name">Струк Михайло Володимирович</div>
+            <div class="teacher-meta">Спеціаліст вищої категорії, старший викладач</div>
+            <div class="teacher-edu"><span>Освіта:</span> Львівський державний університет ім. Івана Франка, 1973 р. — фізик, викладач фізики.</div>
+            <div class="teacher-quals">
+              Підвищення кваліфікації: свідоцтво СОІППО від 14.02.2020 (ПК 02139771 15294-20).
+            </div>
+            <div class="subject-tags">
+              <span class="subject-tag">Фізика</span>
+              <span class="subject-tag">Професійна освіта. Транспорт</span>
+              <span class="subject-tag">Комп'ютерні технології</span>
+              <span class="subject-tag">Техніка та енергетика аграрного виробництва</span>
+              <span class="subject-tag">Розробка програмного забезпечення</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ВЕСЬ КОЛЕКТИВ -->
+    <div class="tab-panel" id="tab-allstaff">
+      <p class="tab-lede">Повний кадровий склад коледжу згідно з ліцензійними вимогами — 62 викладачі та майстри виробничого навчання.</p>
+      <div class="staff-search">
+        <input type="text" id="staffSearchInput" placeholder="Пошук за прізвищем..." oninput="filterStaff()">
+        <span class="staff-count" id="staffCount"></span>
+      </div>
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>ПІБ</th>
+              <th>Категорія / звання</th>
+              <th>Освіта, кваліфікація</th>
+              <th>Забезпечує спеціальності</th>
+            </tr>
+          </thead>
+          <tbody id="staffTableBody"></tbody>
+        </table>
+        <div class="no-results" id="staffNoResults" style="display:none;">Нічого не знайдено</div>
+      </div>
+    </div>
+
+    <!-- СТИПЕНДІЯ -->
+    <div class="tab-panel" id="tab-scholarship">
+      <p class="tab-lede">Стипендіальне забезпечення нараховується за рейтингом успішності — окремо для кожного курсу навчання.</p>
+      <div class="spec-grid">
+        <div class="spec-row">
+          <span class="spec-code">1 к.</span>
+          <span class="spec-name">Рейтинг 1 курсу</span>
+          <span class="spec-tag">за результатами сесії</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">2 к.</span>
+          <span class="spec-name">Рейтинг 2 курсу + професійна освіта</span>
+          <span class="spec-tag">за результатами сесії</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">3 к.</span>
+          <span class="spec-name">Рейтинг 3 курсу + професійна освіта</span>
+          <span class="spec-tag">за результатами сесії</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-code">4 к.</span>
+          <span class="spec-name">Рейтинг 4 курсу</span>
+          <span class="spec-tag">за результатами сесії</span>
+        </div>
+      </div>
+      <p class="schedule-note" style="margin-top:18px;">Актуальні рейтингові списки за кожним курсом публікуються окремо у розділі «Стипендіальне забезпечення» на офіційному сайті коледжу.</p>
+    </div>
+
+    <!-- ГУРТОЖИТОК -->
+    <div class="tab-panel" id="tab-dorm">
+      <p class="tab-lede">Іногороднім здобувачам коледж надає місце в гуртожитку на весь період навчання — гуртожитки входять до матеріальної бази коледжу.</p>
+      <ul class="info-list">
+        <li>Поселення на весь термін навчання для іногородніх здобувачів</li>
+        <li>У гуртожитках проводиться виховна робота та підтримка мешканців</li>
+        <li>Можливість поселення разом із одногрупниками за заявою</li>
+        <li>Точні умови, вартість і наявність місць — уточнюйте у приймальній комісії</li>
+      </ul>
+    </div>
+
+    <!-- РОЗКЛАД -->
+    <div class="tab-panel" id="tab-schedule">
+      <p class="tab-lede">Орієнтовна структура навчального дня — приклад для ілюстрації. Актуальний розклад пар публікується на дошці оголошень та в групах старост.</p>
+      <table class="schedule-table">
+        <thead>
+          <tr><th>Пара</th><th>Час</th><th>Пн–Пт</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>08:30–09:50</td><td>Загальноосвітні / фахові дисципліни</td></tr>
+          <tr><td>2</td><td>10:00–11:20</td><td>Фахові дисципліни</td></tr>
+          <tr><td>—</td><td>11:20–12:00</td><td>Обідня перерва</td></tr>
+          <tr><td>3</td><td>12:00–13:20</td><td>Практичні / лабораторні заняття</td></tr>
+          <tr><td>4</td><td>13:30–14:50</td><td>Факультативи / гуртки</td></tr>
+        </tbody>
+      </table>
+      <p class="schedule-note">Розклад може відрізнятись залежно від курсу, спеціальності та тижня (чисельник/знаменник).</p>
+    </div>
+
+    <!-- СТУДЕНТСЬКЕ ЖИТТЯ -->
+    <div class="tab-panel" id="tab-life">
+      <p class="tab-lede">Навчання — це не тільки пари. У коледжі діє мережа підтримки та простір для творчості й ініціативи.</p>
+      <ul class="info-list">
+        <li>Студентське самоврядування — своя думка щодо життя коледжу має вагу</li>
+        <li>Гурток «Творчий простір» — творчі конкурси та проєкти студентів</li>
+        <li>Волонтерський центр «Добробут» — соціальні та волонтерські ініціативи</li>
+        <li>Психологічна служба: практичний психолог та соціальний педагог супроводжують здобувачів</li>
+        <li>Спортивні секції в межах фізичного виховання коледжу</li>
+        <li>Активна громадська позиція — з перших днів повномасштабної війни колектив коледжу долучився до волонтерських ініціатив на підтримку ЗСУ</li>
+      </ul>
+    </div>
+
+    <!-- ГОРДІСТЬ КОЛЕДЖУ -->
+    <div class="tab-panel" id="tab-alumni">
+      <p class="tab-lede">Випускники, які продовжують справу коледжу в реальних професіях — приклад того, куди веде диплом ФМБ.</p>
+      <ul class="info-list">
+        <li><b>Артем Голінка</b> — Senior Front-end Developer у Genesis, розробка web та mobile додатків. Випускник 2016 р., спеціальність «Розробка програмного забезпечення»</li>
+        <li><b>Юлія Заярна</b> — соціальний педагог, КУСОР «Конотопський дитячий будинок-інтернат». Випускниця 2016 р., «Соціальна робота»</li>
+        <li><b>Юрій Білан</b> — начальник відділу освіти Дубов'язівської ОТГ. Випускник 2007 р.</li>
+        <li><b>Чечель Валерій</b> — директор державного професійно-технічного навчального закладу «Реутенський професійний аграрний ліцей». Випускник 1984 р.</li>
+      </ul>
+      <p class="schedule-note" style="margin-top:14px;">Повний перелік — у розділі «Гордість коледжу» на офіційному сайті.</p>
+    </div>
+
+    <!-- ПРАКТИКА -->
+    <div class="tab-panel" id="tab-practice">
+      <p class="tab-lede">Практика — обов'язкова частина навчання для всіх спеціальностей, з реальними задачами, а не просто «для галочки».</p>
+      <ul class="info-list">
+        <li>За кожною спеціальністю закріплені бази практик та договори про співпрацю з підприємствами</li>
+        <li>IT-спеціальності — практика в командах розробки, реальні проєкти</li>
+        <li>Електротехніка, будівництво, транспорт — практика на виробничих підприємствах регіону</li>
+        <li>Підрозділ зі сприяння працевлаштуванню випускників супроводжує здобувачів після завершення навчання</li>
+        <li>За результатами практики — характеристика, яка враховується при працевлаштуванні</li>
+      </ul>
+    </div>
+
+  </section>
+
+  <section class="contacts-section" id="contacts">
+    <div class="board-heading">
+      <h2>Контакти</h2>
+      <span class="tag">// ПРИЙМАЛЬНА КОМІСІЯ</span>
+    </div>
+    <div class="contacts-inner">
+      <div class="contacts-col">
+        <div class="contact-line"><span>Адреса</span><b>м. Конотоп, вул. М. Немолота, 12, Сумська обл.</b></div>
+        <div class="contact-line"><span>Телефон</span><a href="tel:80544723430">(05447) 2-34-30</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380984246275">098-424-62-75</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380500216390">050-021-63-90</a></div>
+        <div class="contact-line"><span>Факс</span><b>(05447) 2-62-52</b></div>
+      </div>
+      <div class="contacts-col">
+        <div class="contact-line"><span>Заклад</span><b>ВСП «КІПФК СумДУ»</b></div>
+        <div class="contact-line"><span>Сайт</span><a href="https://kipt.sumdu.edu.ua/uk/" target="_blank" rel="noopener">kipt.sumdu.edu.ua</a></div>
+        <div class="contact-line"><span>Ел. бібліотека</span><a href="https://lib.kipt.sumdu.edu.ua/" target="_blank" rel="noopener">lib.kipt.sumdu.edu.ua</a></div>
+        <div class="social-row">
+          <a href="https://www.facebook.com/groups/iptkisumdu/" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/kipfcsumdu/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://t.me/kip_fcsumdu" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://www.tiktok.com/@kipt_ua" target="_blank" rel="noopener">TikTok</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ» · м. Конотоп, вул. М. Немолота, 12</span>
+  <span>Прототип · макет не є офіційним сайтом коледжу</span>
+</footer>
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

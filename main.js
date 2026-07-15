@@ -1,0 +1,155 @@
+// ==================================================
+// ОБЩАЯ ЛОГИКА САЙТА (работает на всех страницах)
+// ==================================================
+
+// ==== МОДАЛКА СТУДЕНТОВ (index.html) ====
+const overlay = document.getElementById('modalOverlay');
+
+function openModal(id){
+  if(!overlay || typeof STUDENTS === 'undefined') return;
+  const s = STUDENTS[id];
+  if(!s) return;
+
+  document.getElementById('modalPhoto').src = s.img;
+  document.getElementById('modalPhoto').alt = s.name;
+  document.getElementById('modalName').textContent = s.name;
+  document.getElementById('modalRole').textContent = s.role;
+  document.getElementById('modalSerial').textContent = s.serial;
+  document.getElementById('modalProject').textContent = s.project;
+  document.getElementById('modalQuote').textContent = s.quote;
+
+  const statsEl = document.getElementById('modalStats');
+  statsEl.innerHTML = s.stats.map(([k,v]) =>
+    `<div class="mstat"><span>${k}</span><span>${v}</span></div>`
+  ).join('');
+
+  const achEl = document.getElementById('modalAchievements');
+  achEl.innerHTML = s.achievements.map(a => `<li>${a}</li>`).join('');
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  if(!overlay) return;
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBackdrop(e){
+  if(e.target === overlay) closeModal();
+}
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeModal();
+});
+
+// ==== ВКЛАДКИ (dovidnyk.html) ====
+function switchTab(name){
+  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  const btn = document.querySelector('.tab-btn[data-tab="' + name + '"]');
+  if(panel) panel.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ==== ТАБЛИЦА ВСЕГО КОЛЛЕКТИВА (dovidnyk.html) ====
+function renderStaff(list){
+  const body = document.getElementById('staffTableBody');
+  if(!body || typeof STAFF === 'undefined') return;
+  const noResults = document.getElementById('staffNoResults');
+  const count = document.getElementById('staffCount');
+
+  count.textContent = list.length + ' / ' + STAFF.length;
+
+  if(list.length === 0){
+    body.innerHTML = '';
+    noResults.style.display = 'block';
+    return;
+  }
+  noResults.style.display = 'none';
+
+  body.innerHTML = list.map((p, i) => `
+    <tr>
+      <td class="col-num">${i + 1}</td>
+      <td class="col-name">${p.n}</td>
+      <td class="col-cat">${p.c}</td>
+      <td class="col-edu">${p.e}</td>
+      <td class="col-groups">${p.g}</td>
+    </tr>
+  `).join('');
+}
+
+function filterStaff(){
+  const input = document.getElementById('staffSearchInput');
+  if(!input) return;
+  const q = input.value.trim().toLowerCase();
+  if(!q){ renderStaff(STAFF); return; }
+  renderStaff(STAFF.filter(p => p.n.toLowerCase().includes(q)));
+}
+
+if(document.getElementById('staffTableBody') && typeof STAFF !== 'undefined'){
+  renderStaff(STAFF);
+}
+
+// ==== ФОРМА ЗАЯВКИ -> TELEGRAM (vstup.html) ====
+const TG_BOT_TOKEN = '8869445575:AAGVYg5A66uksBCKF2ZifI2STwGymYNdoeA';
+const TG_CHAT_ID   = '1416898411';
+
+const applicationForm = document.getElementById('applicationForm');
+const formSuccess = document.getElementById('formSuccess');
+
+if(applicationForm){
+  const submitBtn = applicationForm.querySelector('button[type="submit"]');
+  const formStatus = applicationForm.querySelector('.form-status');
+
+  applicationForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const data = new FormData(applicationForm);
+    const text =
+      '📥 НОВА ЗАЯВКА НА ВСТУП\n' +
+      '━━━━━━━━━━━━━━━━━━\n' +
+      '👤 ПІБ: ' + (data.get('fio') || '—') + '\n' +
+      '🎂 Дата народження: ' + (data.get('birth') || '—') + '\n' +
+      '📞 Телефон: ' + (data.get('phone') || '—') + '\n' +
+      '✉️ Email: ' + (data.get('email') || '—') + '\n' +
+      '🎓 Спеціальність: ' + (data.get('specialty') || '—') + '\n' +
+      '📚 Освіта: ' + (data.get('education') || '—') + '\n' +
+      '💬 Коментар: ' + (data.get('message') || '—');
+
+    submitBtn.disabled = true;
+    formStatus.textContent = 'Надсилаємо...';
+
+    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text: text })
+    })
+    .then(res => res.json())
+    .then(json => {
+      if(json.ok){
+        applicationForm.style.display = 'none';
+        formSuccess.classList.add('active');
+      } else {
+        formStatus.textContent = 'Помилка надсилання. Спробуйте ще раз або зателефонуйте.';
+        submitBtn.disabled = false;
+        console.error('Telegram API error:', json);
+      }
+    })
+    .catch(err => {
+      formStatus.textContent = 'Помилка мережі. Спробуйте ще раз або зателефонуйте.';
+      submitBtn.disabled = false;
+      console.error(err);
+    });
+  });
+
+  window.resetForm = function(){
+    applicationForm.reset();
+    applicationForm.style.display = 'grid';
+    formSuccess.classList.remove('active');
+    submitBtn.disabled = false;
+    formStatus.textContent = 'Відповідь приймальної комісії — протягом 1-2 робочих днів';
+  };
+}

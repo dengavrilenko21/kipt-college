@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вступ 2026 — ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="blueprint-grid"></div>
+<div class="corner-mark cm-tl"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-tr"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-bl"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+<div class="corner-mark cm-br"><svg viewBox="0 0 22 22"><path d="M0 0 L22 0 M0 0 L0 22" stroke="#3FB8AF" stroke-width="1.5" fill="none"/></svg></div>
+
+<header>
+  <div class="brandmark"><span class="dot"></span> КІПФК СУМДУ</div>
+  <nav>
+    <a href="index.html">Головна</a>
+    <a href="specialnosti.html">Спеціальності</a>
+    <a href="dovidnyk.html">Довідник</a>
+    <a href="vstup.html" style="color:var(--copper-bright);">Вступ 2026</a>
+    <a href="kontakty.html">Контакти</a>
+  </nav>
+  <div>м. Конотоп</div>
+</header>
+
+<main>
+  <section class="apply-section" id="apply">
+    <div class="apply-inner">
+      <div>
+        <div class="eyebrow" style="margin-bottom:16px;">Вступна кампанія 2026</div>
+        <h2 class="apply-title">Твоє місце в майбутньому вже креслять.</h2>
+      </div>
+      <div class="apply-actions">
+        <a href="#apply-form" class="btn primary">Подати документи</a>
+        <a href="specialnosti.html" class="btn">Умови вступу</a>
+        <a href="#apply-form" class="btn">Написати приймальній комісії</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="apply-form-section" id="apply-form">
+    <div class="form-panel">
+      <div class="pins"></div>
+      <div class="form-head">
+        <h2>Подати заявку на вступ</h2>
+        <span class="tag">// ФОРМА · ПРИЙМАЛЬНА КОМІСІЯ</span>
+      </div>
+
+      <form class="app-form" id="applicationForm">
+        <div class="field">
+          <label for="fio">ПІБ абітурієнта</label>
+          <input type="text" id="fio" name="fio" placeholder="Прізвище Ім'я По батькові" required>
+        </div>
+        <div class="field">
+          <label for="birth">Дата народження</label>
+          <input type="date" id="birth" name="birth" required>
+        </div>
+        <div class="field">
+          <label for="phone">Телефон</label>
+          <input type="tel" id="phone" name="phone" placeholder="+380 __ ___ __ __" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+        </div>
+        <div class="field full">
+          <label for="specialty">Обрана спеціальність</label>
+          <select id="specialty" name="specialty" required>
+            <option value="" disabled selected>Оберіть спеціальність</option>
+            <option value="Інженерія програмного забезпечення">Інженерія програмного забезпечення</option>
+            <option value="Електрична інженерія">Електрична інженерія</option>
+            <option value="Будівництво та цивільна інженерія">Будівництво та цивільна інженерія</option>
+            <option value="Автомобільний транспорт">Автомобільний транспорт</option>
+            <option value="Фінанси, банківська справа, страхування та фондовий ринок">Фінанси, банківська справа, страхування та фондовий ринок</option>
+            <option value="Соціальна робота та консультування">Соціальна робота та консультування</option>
+            <option value="Торгівля">Торгівля</option>
+            <option value="Професійна освіта. Цифрові технології">Професійна освіта. Цифрові технології</option>
+            <option value="Професійна освіта. Електротехніка">Професійна освіта. Електротехніка</option>
+            <option value="Професійна освіта. Зварювання">Професійна освіта. Зварювання</option>
+            <option value="Професійна освіта. Будівництво">Професійна освіта. Будівництво</option>
+            <option value="Професійна освіта. Транспорт">Професійна освіта. Транспорт</option>
+            <option value="Інше / ще не визначився(лась)">Інше / ще не визначився(лась)</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="education">Освіта на момент вступу</label>
+          <select id="education" name="education" required>
+            <option value="" disabled selected>Оберіть варіант</option>
+            <option value="9 класів">9 класів</option>
+            <option value="11 класів">11 класів</option>
+            <option value="Диплом кваліфікованого робітника">Диплом кваліфікованого робітника</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="message">Коментар / питання до приймальної комісії</label>
+          <textarea id="message" name="message" placeholder="Наприклад: чи є місця в гуртожитку, які документи потрібні тощо"></textarea>
+          <span class="hint">необов'язкове поле</span>
+        </div>
+
+        <label class="consent-row">
+          <input type="checkbox" required>
+          Даю згоду на обробку персональних даних відповідно до Закону України «Про захист персональних даних» для цілей розгляду заявки на вступ.
+        </label>
+
+        <div class="form-submit-row">
+          <button type="submit" class="btn primary">Надіслати заявку →</button>
+          <span class="form-status">Відповідь приймальної комісії — протягом 1-2 робочих днів</span>
+        </div>
+      </form>
+
+      <div class="form-success" id="formSuccess">
+        <div class="check">✓</div>
+        <h3>Заявку прийнято</h3>
+        <p>Дякуємо! Приймальна комісія отримала твої дані та зв'яжеться найближчим часом. Слідкуй за поштою та телефоном, вказаними у заявці.</p>
+        <a href="#apply-form" class="btn" onclick="resetForm(); return false;">Подати ще одну заявку</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contacts-section" id="contacts">
+    <div class="board-heading">
+      <h2>Контакти</h2>
+      <span class="tag">// ПРИЙМАЛЬНА КОМІСІЯ</span>
+    </div>
+    <div class="contacts-inner">
+      <div class="contacts-col">
+        <div class="contact-line"><span>Адреса</span><b>м. Конотоп, вул. М. Немолота, 12, Сумська обл.</b></div>
+        <div class="contact-line"><span>Телефон</span><a href="tel:80544723430">(05447) 2-34-30</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380984246275">098-424-62-75</a></div>
+        <div class="contact-line"><span>Приймальна комісія</span><a href="tel:+380500216390">050-021-63-90</a></div>
+        <div class="contact-line"><span>Факс</span><b>(05447) 2-62-52</b></div>
+      </div>
+      <div class="contacts-col">
+        <div class="contact-line"><span>Заклад</span><b>ВСП «КІПФК СумДУ»</b></div>
+        <div class="contact-line"><span>Сайт</span><a href="https://kipt.sumdu.edu.ua/uk/" target="_blank" rel="noopener">kipt.sumdu.edu.ua</a></div>
+        <div class="contact-line"><span>Ел. бібліотека</span><a href="https://lib.kipt.sumdu.edu.ua/" target="_blank" rel="noopener">lib.kipt.sumdu.edu.ua</a></div>
+        <div class="social-row">
+          <a href="https://www.facebook.com/groups/iptkisumdu/" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/kipfcsumdu/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://t.me/kip_fcsumdu" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://www.tiktok.com/@kipt_ua" target="_blank" rel="noopener">TikTok</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ» · м. Конотоп, вул. М. Немолота, 12</span>
+  <span>Прототип · макет не є офіційним сайтом коледжу</span>
+</footer>
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
