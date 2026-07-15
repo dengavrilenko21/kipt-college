@@ -75,7 +75,7 @@
     background:var(--teal);
     box-shadow:0 0 10px var(--teal);
   }
-  header nav{display:flex;gap:28px;}
+  header nav{display:flex;gap:26px;}
   header nav a{color:var(--muted); text-decoration:none; transition:color .2s ease;}
   header nav a:hover{color:var(--copper-bright);}
 
@@ -158,6 +158,8 @@
     align-items:center;
     gap:10px;
     transition:border-color .2s ease, color .2s ease;
+    background:transparent;
+    cursor:pointer;
   }
   .btn.primary{
     background:var(--copper);
@@ -201,6 +203,28 @@
     margin:0 auto;
     padding:20px 48px 70px;
   }
+  .board-heading{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:40px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;
+  }
+  .board-heading h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(22px, 2.6vw, 32px);
+    font-weight:600;
+  }
+  .board-heading .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.06em;
+  }
+  .tab-lede{font-size:15px; line-height:1.65; color:var(--muted); max-width:64ch; margin-bottom:24px;}
   .spec-grid{
     display:flex;
     flex-direction:column;
@@ -334,7 +358,7 @@
     padding:5px 10px;
   }
 
-  /* generic info list (dorm / life / practice) */
+  /* generic info list */
   .info-list{list-style:none; display:flex; flex-direction:column; gap:10px;}
   .info-list li{
     font-size:14.5px;
@@ -348,7 +372,6 @@
     position:absolute; left:0; top:0;
     color:var(--teal);
   }
-  .tab-lede{font-size:15px; line-height:1.65; color:var(--muted); max-width:64ch; margin-bottom:24px;}
   .tab-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:20px 30px; margin-bottom:30px;}
 
   /* schedule table */
@@ -374,46 +397,70 @@
     opacity:0.8;
   }
 
-  @media (max-width: 700px){
-    .info-hub{padding-left:22px; padding-right:22px;}
-    .teacher-card{flex-direction:column; align-items:flex-start;}
-    .photo-placeholder{width:100px; height:125px;}
-    .teacher-photo{width:100px; height:125px;}
-    .schedule-table{font-size:12px;}
+  /* ==== FULL STAFF TABLE ==== */
+  .staff-search{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+    max-width:360px;
   }
+  .staff-search input{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Manrope', sans-serif;
+    font-size:14px;
+    padding:11px 14px;
+    outline:none;
+    width:100%;
+    transition:border-color .2s ease;
+  }
+  .staff-search input:focus{border-color:var(--teal);}
+  .staff-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .staff-table-wrap{overflow-x:auto; border:1px solid var(--line);}
+  .staff-table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:820px;}
+  .staff-table th{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--muted);
+    background:var(--panel);
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  .staff-table td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    color:var(--text);
+    vertical-align:top;
+    line-height:1.45;
+  }
+  .staff-table tr:last-child td{border-bottom:none;}
+  .staff-table tr:hover td{background:rgba(63,184,175,0.05);}
+  .staff-table .col-num{color:var(--muted); font-family:'IBM Plex Mono', monospace; width:32px;}
+  .staff-table .col-name{font-weight:600; min-width:190px;}
+  .staff-table .col-cat{color:var(--copper-bright); font-size:11.5px; min-width:150px;}
+  .staff-table .col-edu{min-width:220px; color:var(--muted); font-size:12px;}
+  .staff-table .col-groups{font-size:11px; color:var(--muted); min-width:220px;}
+  .no-results{padding:24px; text-align:center; color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:12px;}
 
   /* ==== CIRCUIT BOARD / STUDENTS SECTION ==== */
   .board-section{
     position:relative;
+    z-index:1;
     max-width:1280px;
-    margin:40px auto 0;
-    padding:70px 48px 100px;
+    margin:0 auto;
+    padding:20px 48px 70px;
   }
-  .board-heading{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:14px;
-    margin-bottom:56px;
-    border-bottom:1px solid var(--line);
-    padding-bottom:22px;
-  }
-  .board-heading h2{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:clamp(22px, 2.6vw, 32px);
-    font-weight:600;
-  }
-  .board-heading .tag{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:var(--muted);
-    letter-spacing:0.06em;
-  }
-
-  .traces-wrap{
-    position:relative;
-  }
+  .traces-wrap{position:relative;}
   .traces-svg{
     position:absolute;
     top:0; left:0;
@@ -432,7 +479,6 @@
     stroke:var(--teal);
     stroke-width:1.5;
   }
-
   .chips{
     position:relative;
     z-index:1;
@@ -446,6 +492,7 @@
     position:relative;
     padding:22px 22px 26px;
     transition:transform .25s ease, border-color .25s ease;
+    cursor:pointer;
   }
   .chip:hover{
     transform:translateY(-6px);
@@ -516,7 +563,6 @@
     transition:opacity .2s ease, transform .2s ease;
   }
   .chip:hover .chip-more{opacity:1; transform:translateX(4px);}
-  .chip{cursor:pointer;}
 
   /* ==== APPLY SECTION ==== */
   .apply-section{
@@ -686,73 +732,6 @@
   .form-success p{font-size:13.5px; color:var(--muted); max-width:48ch; line-height:1.55;}
   @keyframes successFade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
 
-  @media (max-width: 700px){
-    .app-form{grid-template-columns:1fr;}
-    .form-panel{padding:28px 22px;}
-    .apply-form-section{padding-left:22px; padding-right:22px;}
-  }
-
-  /* ==== FULL STAFF TABLE ==== */
-  .staff-search{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:20px;
-    max-width:360px;
-  }
-  .staff-search input{
-    background:var(--bg);
-    border:1px solid var(--line);
-    color:var(--text);
-    font-family:'Manrope', sans-serif;
-    font-size:14px;
-    padding:11px 14px;
-    outline:none;
-    width:100%;
-    transition:border-color .2s ease;
-  }
-  .staff-search input:focus{border-color:var(--teal);}
-  .staff-count{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    color:var(--muted);
-    white-space:nowrap;
-  }
-  .staff-table-wrap{overflow-x:auto; border:1px solid var(--line);}
-  .staff-table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:820px;}
-  .staff-table th{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:0.04em;
-    color:var(--muted);
-    background:var(--panel);
-    text-align:left;
-    padding:10px 12px;
-    border-bottom:1px solid var(--line);
-    position:sticky;
-    top:0;
-  }
-  .staff-table td{
-    padding:10px 12px;
-    border-bottom:1px solid var(--line);
-    color:var(--text);
-    vertical-align:top;
-    line-height:1.45;
-  }
-  .staff-table tr:last-child td{border-bottom:none;}
-  .staff-table tr:hover td{background:rgba(63,184,175,0.05);}
-  .staff-table .col-num{color:var(--muted); font-family:'IBM Plex Mono', monospace; width:32px;}
-  .staff-table .col-name{font-weight:600; min-width:190px;}
-  .staff-table .col-cat{color:var(--copper-bright); font-size:11.5px; min-width:150px;}
-  .staff-table .col-edu{min-width:220px; color:var(--muted); font-size:12px;}
-  .staff-table .col-groups{font-size:11px; color:var(--muted); min-width:220px;}
-  .no-results{padding:24px; text-align:center; color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:12px;}
-
-  @media (max-width: 700px){
-    .staff-search{max-width:none;}
-  }
-
   /* ==== CONTACTS ==== */
   .contacts-section{
     position:relative;
@@ -798,12 +777,6 @@
     transition:background .2s ease, color .2s ease;
   }
   .social-row a:hover{background:var(--teal); color:var(--bg);}
-
-  @media (max-width: 700px){
-    .contacts-section{padding-left:22px; padding-right:22px;}
-    .contacts-inner{grid-template-columns:1fr;}
-    .contacts-col:first-child{border-right:none; border-bottom:1px solid var(--line);}
-  }
 
   /* ==== MODAL ==== */
   .modal-overlay{
@@ -853,7 +826,6 @@
     transition:border-color .2s ease, color .2s ease, transform .2s ease;
   }
   .modal-close:hover{border-color:var(--copper); color:var(--copper-bright); transform:rotate(90deg);}
-
   .modal-grid{
     display:grid;
     grid-template-columns:260px 1fr;
@@ -935,20 +907,12 @@
     color:var(--text);
     padding-left:18px;
     position:relative;
-    opacity:0;
-    transform:translateX(-6px);
-    animation:achFade .4s ease forwards;
   }
   .modal-achievements li::before{
     content:'▸';
     position:absolute; left:0; top:0;
     color:var(--teal);
   }
-  .modal-achievements li:nth-child(1){animation-delay:.05s;}
-  .modal-achievements li:nth-child(2){animation-delay:.12s;}
-  .modal-achievements li:nth-child(3){animation-delay:.19s;}
-  .modal-achievements li:nth-child(4){animation-delay:.26s;}
-  @keyframes achFade{ to{ opacity:1; transform:translateX(0); } }
   .modal-quote{
     font-size:13.5px;
     line-height:1.6;
@@ -956,13 +920,6 @@
     font-style:italic;
     border-left:2px solid var(--copper);
     padding-left:14px;
-  }
-
-  @media (max-width: 700px){
-    .modal-grid{grid-template-columns:1fr;}
-    .modal-photo-col{border-right:none; border-bottom:1px solid var(--line); flex-direction:row; align-items:center;}
-    .modal-photo-frame{width:110px; flex-shrink:0;}
-    .modal-serial{font-size:9.5px;}
   }
 
   footer{
@@ -984,8 +941,8 @@
     header{padding:18px 22px;}
     header nav{display:none;}
     .hero{padding:52px 22px 40px;}
-    .board-section{padding:50px 22px 70px;}
-    .about-strip, .specialties-section, .apply-section{padding-left:22px; padding-right:22px;}
+    .board-section{padding:20px 22px 70px;}
+    .about-strip, .specialties-section, .apply-section, .apply-form-section, .info-hub, .contacts-section{padding-left:22px; padding-right:22px;}
     .about-inner{flex-direction:column;}
     .subtitle-row{gap:26px;}
     .specs{border-left:none; border-top:1px solid var(--line); padding-left:0; padding-top:16px; width:100%;}
@@ -994,6 +951,17 @@
     .spec-row{grid-template-columns:44px 1fr; grid-template-areas:"code name" ". tag";}
     .spec-tag{grid-column:2;}
     .apply-inner{padding:32px 24px;}
+    .app-form{grid-template-columns:1fr;}
+    .form-panel{padding:28px 22px;}
+    .modal-grid{grid-template-columns:1fr;}
+    .modal-photo-col{border-right:none; border-bottom:1px solid var(--line); flex-direction:row; align-items:center;}
+    .modal-photo-frame{width:110px; flex-shrink:0;}
+    .modal-serial{font-size:9.5px;}
+    .contacts-inner{grid-template-columns:1fr;}
+    .contacts-col:first-child{border-right:none; border-bottom:1px solid var(--line);}
+    .teacher-card{flex-direction:column; align-items:flex-start;}
+    .photo-placeholder, .teacher-photo{width:100px; height:125px;}
+    .staff-search{max-width:none;}
   }
 </style>
 </head>
@@ -1368,7 +1336,7 @@
             <div class="scan"></div>
           </div>
           <div class="chip-name">Січкар Євген</div>
-          <div class="chip-role">121 · Інженерія програмного забезпечення</div>
+          <div class="chip-role">Інженерія програмного забезпечення · 2 курс</div>
           <div class="chip-quote">Пише код так, що навіть <b>Falcon 9</b> не одразу знайде баг. Через пару років — або в Starlink, або сам запустить конкурента.</div>
           <div class="chip-more">Детальніше →</div>
         </div>
@@ -1380,7 +1348,7 @@
             <div class="scan"></div>
           </div>
           <div class="chip-name">Гавриленко Денис</div>
-          <div class="chip-role">121 · Інженерія програмного забезпечення</div>
+          <div class="chip-role">Інженерія програмного забезпечення · 2 курс</div>
           <div class="chip-quote">Дебажить у навушниках і не піднімає голови. У Tesla таких беруть без співбесіди — просто дивляться на git-історію.</div>
           <div class="chip-more">Детальніше →</div>
         </div>
@@ -1392,7 +1360,7 @@
             <div class="scan"></div>
           </div>
           <div class="chip-name">Бова Арсеній</div>
-          <div class="chip-role">Електротехніка</div>
+          <div class="chip-role">Електротехніка · 2 курс</div>
           <div class="chip-quote">Знає різницю між фазою і нулем краще за будь-який підручник. Коли Ілон будуватиме Марсіанську мережу — проводку доручать йому.</div>
           <div class="chip-more">Детальніше →</div>
         </div>
@@ -1669,6 +1637,73 @@
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     document.querySelector('.tab-btn[data-tab="' + name + '"]').classList.add('active');
+  }
+
+  // ==== APPLICATION FORM -> TELEGRAM ====
+  // ↓↓↓ ВСТАВЬ СВОИ ЗНАЧЕНИЯ СЮДА ↓↓↓
+  const TG_BOT_TOKEN = '8869445575:AAGVYg5A66uksBCKF2ZifI2STwGymYNdoeA';
+  const TG_CHAT_ID   = '1416898411';
+  // ↑↑↑ ВСТАВЬ СВОИ ЗНАЧЕНИЯ СЮДА ↑↑↑
+
+  const applicationForm = document.getElementById('applicationForm');
+  const formSuccess = document.getElementById('formSuccess');
+  const submitBtn = applicationForm.querySelector('button[type="submit"]');
+  const formStatus = applicationForm.querySelector('.form-status');
+
+  applicationForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const data = new FormData(applicationForm);
+    const text =
+      '📥 НОВА ЗАЯВКА НА ВСТУП\n' +
+      '━━━━━━━━━━━━━━━━━━\n' +
+      '👤 ПІБ: ' + (data.get('fio') || '—') + '\n' +
+      '🎂 Дата народження: ' + (data.get('birth') || '—') + '\n' +
+      '📞 Телефон: ' + (data.get('phone') || '—') + '\n' +
+      '✉️ Email: ' + (data.get('email') || '—') + '\n' +
+      '🎓 Спеціальність: ' + (data.get('specialty') || '—') + '\n' +
+      '📚 Освіта: ' + (data.get('education') || '—') + '\n' +
+      '💬 Коментар: ' + (data.get('message') || '—');
+
+    submitBtn.disabled = true;
+    formStatus.textContent = 'Надсилаємо...';
+
+    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TG_CHAT_ID,
+        text: text
+      })
+    })
+    .then(res => res.json())
+    .then(json => {
+      if(json.ok){
+        showSuccess();
+      } else {
+        formStatus.textContent = 'Помилка надсилання. Спробуйте ще раз або зателефонуйте.';
+        submitBtn.disabled = false;
+        console.error('Telegram API error:', json);
+      }
+    })
+    .catch(err => {
+      formStatus.textContent = 'Помилка мережі. Спробуйте ще раз або зателефонуйте.';
+      submitBtn.disabled = false;
+      console.error(err);
+    });
+  });
+
+  function showSuccess(){
+    applicationForm.style.display = 'none';
+    formSuccess.classList.add('active');
+  }
+
+  function resetForm(){
+    applicationForm.reset();
+    applicationForm.style.display = 'grid';
+    formSuccess.classList.remove('active');
+    submitBtn.disabled = false;
+    formStatus.textContent = 'Відповідь приймальної комісії — протягом 1-2 робочих днів';
   }
 
   // ==== FULL STAFF ROSTER ====
@@ -2080,40 +2115,6 @@
   }
 
   renderStaff(STAFF);
-
-  // ==== APPLICATION FORM ====
-  const applicationForm = document.getElementById('applicationForm');
-  const formSuccess = document.getElementById('formSuccess');
-
-  applicationForm.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    // NOTE: this is a static site (GitHub Pages) with no backend.
-    // To actually receive submissions by email, connect a free form backend,
-    // e.g. https://formspree.io — create a free form, then either:
-    //  1) set this form's action to your Formspree endpoint and remove
-    //     e.preventDefault() above, or
-    //  2) send via fetch() here using your endpoint, e.g.:
-    //
-    // fetch('https://formspree.io/f/YOUR_ID', {
-    //   method: 'POST',
-    //   headers: { 'Accept': 'application/json' },
-    //   body: new FormData(applicationForm)
-    // }).then(() => showSuccess());
-
-    showSuccess();
-  });
-
-  function showSuccess(){
-    applicationForm.style.display = 'none';
-    formSuccess.classList.add('active');
-  }
-
-  function resetForm(){
-    applicationForm.reset();
-    applicationForm.style.display = 'grid';
-    formSuccess.classList.remove('active');
-  }
 </script>
 
 </body>
