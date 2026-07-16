@@ -44,6 +44,26 @@ document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') closeModal();
 });
 
+
+// ==== РЕНДЕР КАРТОЧЕК СТУДЕНТОВ (index.html) ====
+(function renderChips(){
+  const container = document.getElementById('chipsContainer');
+  if(!container || typeof STUDENTS === 'undefined') return;
+  container.innerHTML = Object.entries(STUDENTS).map(([id, s], i) => `
+    <div class="chip" data-index="U-0${i + 1}" onclick="openModal('${id}')">
+      <div class="pins"></div>
+      <div class="photo-frame">
+        <img src="${s.img}" alt="${s.name}">
+        <div class="scan"></div>
+      </div>
+      <div class="chip-name">${s.name}</div>
+      <div class="chip-role">${s.role}</div>
+      <div class="chip-quote">${s.chipQuote || ''}</div>
+      <div class="chip-more">Детальніше →</div>
+    </div>
+  `).join('');
+})();
+
 // ==== ВКЛАДКИ (dovidnyk.html) ====
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));

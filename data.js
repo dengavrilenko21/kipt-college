@@ -8,6 +8,7 @@ const STUDENTS = {
     img: 'images/students/evgen.jpg',
     name: 'Січкар Євген',
     role: 'Інженерія програмного забезпечення · 2 курс',
+    chipQuote: 'Пише код так, що навіть <b>Falcon 9</b> не одразу знайде баг. Через пару років — або в Starlink, або сам запустить конкурента.',
     serial: 'SN: KIPTU-SE-002\nBUILD: 2 course\nUPTIME: 24/7 (з перервою на пари)',
     stats: [
       ['Мова коду', 'Python / JS'],
@@ -28,6 +29,7 @@ const STUDENTS = {
     img: 'images/students/denys.jpg',
     name: 'Гавриленко Денис',
     role: 'Інженерія програмного забезпечення · 2 курс',
+    chipQuote: 'Дебажить у навушниках і не піднімає голови. У Tesla таких беруть без співбесіди — просто дивляться на git-історію.',
     serial: 'SN: KIPTU-SE-003\nBUILD: 2 course\nAUDIO: навушники не знімаються',
     stats: [
       ['Гучність музики', '100%'],
@@ -48,6 +50,7 @@ const STUDENTS = {
     img: 'images/students/arseniy.jpg',
     name: 'Бова Арсеній',
     role: 'Електротехніка · 2 курс',
+    chipQuote: 'Знає різницю між фазою і нулем краще за будь-який підручник. Коли Ілон будуватиме Марсіанську мережу — проводку доручать йому.',
     serial: 'SN: KIPTU-EL-001\nBUILD: 2 course\nVOLTAGE: під контролем',
     stats: [
       ['Ударів струмом', '0 (офіційно)'],

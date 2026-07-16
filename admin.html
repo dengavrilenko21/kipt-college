@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель — КІПФК</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0B14; --glass:rgba(255,255,255,0.045); --glass-border:rgba(255,255,255,0.10);
+    --ink:#F2F2F8; --muted:#9CA0B4; --line:rgba(255,255,255,0.09);
+    --violet:#8B5CF6; --cyan:#22D3EE; --grad:linear-gradient(120deg,#8B5CF6,#22D3EE);
+    --danger:#F87171; --ok:#34D399;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;}
+  .bg-glow{position:fixed;inset:0;pointer-events:none;background:
+    radial-gradient(600px 400px at 15% 0%, rgba(139,92,246,0.14), transparent 65%),
+    radial-gradient(700px 500px at 90% 30%, rgba(34,211,238,0.09), transparent 65%);}
+  .wrap{position:relative;max-width:1080px;margin:0 auto;padding:40px 24px 100px;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4vw,40px);letter-spacing:-0.02em;margin-bottom:6px;}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:34px;}
+  .card{background:var(--glass);border:1px solid var(--glass-border);border-radius:22px;padding:28px;backdrop-filter:blur(10px);margin-bottom:20px;}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);font-weight:700;margin:14px 0 6px;}
+  input,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--ink);
+    font-family:'Manrope',sans-serif;font-size:14px;padding:11px 14px;border-radius:12px;outline:none;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--violet);}
+  textarea{resize:vertical;min-height:60px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;padding:12px 22px;border-radius:14px;
+    border:1px solid var(--glass-border);background:var(--glass);color:var(--ink);cursor:pointer;transition:all .2s;text-decoration:none;}
+  .btn:hover{border-color:rgba(255,255,255,0.3);}
+  .btn.primary{background:var(--grad);color:#0B0B14;border-color:transparent;}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(139,92,246,0.35);}
+  .btn.danger{color:var(--danger);border-color:rgba(248,113,113,0.3);}
+  .btn.danger:hover{background:rgba(248,113,113,0.1);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+  .hint{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:10px;}
+  .hint a{color:var(--cyan);}
+  .status{font-size:13px;margin-top:14px;min-height:18px;}
+  .status.ok{color:var(--ok);} .status.err{color:var(--danger);}
+  .hidden{display:none;}
+  .tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+  .tab{padding:10px 18px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);
+    border:1px solid var(--glass-border);background:var(--glass);transition:all .2s;}
+  .tab.active{background:var(--grad);color:#0B0B14;border-color:transparent;}
+  .panel{display:none;} .panel.active{display:block;}
+  .student-block{border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;}
+  .student-block h3{font-family:'Space Grotesk',sans-serif;font-size:18px;margin-bottom:4px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}
+  .staff-row{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+  .staff-row summary{cursor:pointer;font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;gap:10px;list-style:none;}
+  .staff-row summary::-webkit-details-marker{display:none;}
+  .staff-row summary span{color:var(--muted);font-weight:500;font-size:12px;}
+  .row-actions{margin-top:12px;display:flex;gap:10px;}
+  .savebar{position:sticky;bottom:16px;display:flex;gap:12px;align-items:center;background:rgba(11,11,20,0.85);
+    backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:18px;padding:14px 18px;margin-top:26px;z-index:5;}
+  .searchrow{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+  .searchrow input{max-width:320px;}
+  ol{margin:8px 0 0 18px;color:var(--muted);font-size:13.5px;line-height:1.8;}
+  code{background:rgba(255,255,255,0.08);padding:2px 7px;border-radius:6px;font-size:12.5px;}
+  @media(max-width:700px){.grid2,.stats-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <h1>Админ-панель</h1>
+  <p class="sub">Редактирование контента сайта · изменения коммитятся прямо в GitHub</p>
+
+  <!-- ЛОГИН -->
+  <div class="card" id="loginCard">
+    <label>GitHub токен (fine-grained)</label>
+    <input type="password" id="tokenInput" placeholder="github_pat_...">
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;margin-top:12px;">
+      <input type="checkbox" id="rememberToken" style="width:auto;"> Запомнить токен в этом браузере
+    </label>
+    <div style="margin-top:18px;">
+      <button class="btn primary" onclick="login()">Войти →</button>
+    </div>
+    <div class="status" id="loginStatus"></div>
+    <div class="hint">
+      <b>Как получить токен (один раз):</b>
+      <ol>
+        <li>GitHub → аватар → <b>Settings</b> → внизу слева <b>Developer settings</b></li>
+        <li><b>Personal access tokens → Fine-grained tokens → Generate new token</b></li>
+        <li>Repository access: <b>Only select repositories</b> → выбери <code>kipt-college</code></li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+        <li>Generate token → скопируй и вставь сюда</li>
+      </ol>
+      Токен хранится только в твоём браузере и никуда, кроме GitHub API, не отправляется. Не публикуй его и не пересылай никому.
+    </div>
+  </div>
+
+  <!-- РЕДАКТОР -->
+  <div class="hidden" id="editor">
+    <div class="tabs">
+      <div class="tab active" data-panel="students" onclick="showPanel('students')">Студенты</div>
+      <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
+    </div>
+
+    <div class="panel active" id="panel-students"></div>
+
+    <div class="panel" id="panel-staff">
+      <div class="searchrow">
+        <input type="text" id="staffFilter" placeholder="Поиск по фамилии..." oninput="renderStaffEditor()">
+        <button class="btn" onclick="addStaff()">+ Добавить преподавателя</button>
+        <span class="hint" id="staffCounter" style="margin-top:0;"></span>
+      </div>
+      <div id="staffList"></div>
+    </div>
+
+    <div class="savebar">
+      <button class="btn primary" id="saveBtn" onclick="saveAll()">💾 Сохранить изменения на сайт</button>
+      <span class="status" id="saveStatus" style="margin-top:0;"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+const OWNER = 'dengavrilenko21';
+const REPO  = 'kipt-college';
+const FILE  = 'data.js';
+
+let token = '';
+let fileSha = '';
+let students = {};
+let staff = [];
+
+// ---------- UTF-8 <-> base64 ----------
+function b64decodeUtf8(b64){
+  const bin = atob(b64.replace(/\n/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function b64encodeUtf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for(let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+// ---------- ЛОГИН И ЗАГРУЗКА ----------
+const savedToken = localStorage.getItem('kipt_admin_token');
+if(savedToken){ document.getElementById('tokenInput').value = savedToken; }
+
+async function login(){
+  token = document.getElementById('tokenInput').value.trim();
+  const st = document.getElementById('loginStatus');
+  if(!token){ st.textContent = 'Вставь токен.'; st.className = 'status err'; return; }
+  st.textContent = 'Загружаем data.js из репозитория...'; st.className = 'status';
+
+  try{
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if(!res.ok){
+      const t = await res.text();
+      st.textContent = 'Ошибка ' + res.status + ' — проверь токен и права (Contents: Read and write).';
+      st.className = 'status err';
+      console.error(t);
+      return;
+    }
+    const json = await res.json();
+    fileSha = json.sha;
+    const code = b64decodeUtf8(json.content);
+    const parsed = new Function(code + ';return {STUDENTS, STAFF};')();
+    students = parsed.STUDENTS;
+    staff = parsed.STAFF;
+
+    if(document.getElementById('rememberToken').checked){
+      localStorage.setItem('kipt_admin_token', token);
+    }
+
+    document.getElementById('loginCard').classList.add('hidden');
+    document.getElementById('editor').classList.remove('hidden');
+    renderStudentsEditor();
+    renderStaffEditor();
+  }catch(err){
+    st.textContent = 'Ошибка: ' + err.message;
+    st.className = 'status err';
+    console.error(err);
+  }
+}
+
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelector('.tab[data-panel="' + name + '"]').classList.add('active');
+}
+
+// ---------- РЕДАКТОР СТУДЕНТОВ ----------
+function renderStudentsEditor(){
+  const root = document.getElementById('panel-students');
+  root.innerHTML = Object.entries(students).map(([id, s]) => `
+    <div class="card student-block" data-id="${id}">
+      <h3>${s.name}</h3>
+      <div class="hint" style="margin-top:0;">id: <code>${id}</code> · фото: <code>${s.img}</code></div>
+      <div class="grid2">
+        <div><label>Имя (ПІБ)</label><input data-f="name" value="${escAttr(s.name)}"></div>
+        <div><label>Роль / специальность</label><input data-f="role" value="${escAttr(s.role)}"></div>
+      </div>
+      <label>Текст на карточке (можно &lt;b&gt;жирный&lt;/b&gt;)</label>
+      <textarea data-f="chipQuote">${escHtml(s.chipQuote || '')}</textarea>
+      <label>Серийник в модалке (строки через Enter)</label>
+      <textarea data-f="serial">${escHtml(s.serial.replace(/\\n/g, '\n'))}</textarea>
+      <label>Статы (4 строки: название | значение)</label>
+      <div class="stats-grid">
+        ${s.stats.map((pair, i) => `
+          <input data-f="statk${i}" value="${escAttr(pair[0])}" placeholder="Название">
+          <input data-f="statv${i}" value="${escAttr(pair[1])}" placeholder="Значение">
+        `).join('')}
+      </div>
+      <label>Текущий проект</label>
+      <textarea data-f="project">${escHtml(s.project)}</textarea>
+      <label>Достижения (по одному в строке)</label>
+      <textarea data-f="achievements" style="min-height:90px;">${escHtml(s.achievements.join('\n'))}</textarea>
+      <label>Цитата</label>
+      <textarea data-f="quote">${escHtml(s.quote)}</textarea>
+    </div>
+  `).join('');
+}
+
+function collectStudents(){
+  document.querySelectorAll('.student-block').forEach(block => {
+    const id = block.dataset.id;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    const s = students[id];
+    s.name = g('name');
+    s.role = g('role');
+    s.chipQuote = g('chipQuote');
+    s.serial = g('serial').replace(/\n/g, '\\n');
+    s.stats = [0,1,2,3].map(i => [g('statk' + i), g('statv' + i)]);
+    s.project = g('project');
+    s.achievements = g('achievements').split('\n').map(x => x.trim()).filter(Boolean);
+    s.quote = g('quote');
+  });
+}
+
+// ---------- РЕДАКТОР СОСТАВА ----------
+function renderStaffEditor(){
+  collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
+  const q = (document.getElementById('staffFilter').value || '').trim().toLowerCase();
+  const list = document.getElementById('staffList');
+  document.getElementById('staffCounter').textContent = staff.length + ' чел.';
+  list.innerHTML = staff.map((p, i) => {
+    if(q && !p.n.toLowerCase().includes(q)) return '';
+    return `
+    <details class="staff-row" data-i="${i}">
+      <summary>${escHtml(p.n)} <span>${escHtml(p.c)}</span></summary>
+      <label>ПІБ</label><input data-f="n" value="${escAttr(p.n)}">
+      <label>Категория / звание</label><input data-f="c" value="${escAttr(p.c)}">
+      <label>Образование</label><textarea data-f="e">${escHtml(p.e)}</textarea>
+      <label>Обеспечивает специальности</label><textarea data-f="g">${escHtml(p.g)}</textarea>
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeStaff(${i})">Удалить</button>
+      </div>
+    </details>`;
+  }).join('') || '<p class="hint">Ничего не найдено</p>';
+}
+
+function collectStaffOpen(){
+  document.querySelectorAll('.staff-row').forEach(row => {
+    const i = parseInt(row.dataset.i);
+    if(isNaN(i) || !staff[i]) return;
+    const el = f => row.querySelector('[data-f="' + f + '"]');
+    if(!el('n')) return;
+    staff[i].n = el('n').value;
+    staff[i].c = el('c').value;
+    staff[i].e = el('e').value;
+    staff[i].g = el('g').value;
+  });
+}
+
+function addStaff(){
+  collectStaffOpen();
+  staff.unshift({ n: 'Нове Прізвище Ім\'я', c: '—', e: '—', g: '—' });
+  document.getElementById('staffFilter').value = '';
+  renderStaffEditor();
+  const first = document.querySelector('.staff-row');
+  if(first) first.open = true;
+}
+
+function removeStaff(i){
+  if(!confirm('Удалить «' + staff[i].n + '» из списка?')) return;
+  collectStaffOpen();
+  staff.splice(i, 1);
+  renderStaffEditor();
+}
+
+// ---------- СОХРАНЕНИЕ ----------
+async function saveAll(){
+  const st = document.getElementById('saveStatus');
+  const btn = document.getElementById('saveBtn');
+  collectStudents();
+  collectStaffOpen();
+
+  const fileText =
+    '// Файл сгенерирован админ-панелью\n\n' +
+    'const STUDENTS = ' + JSON.stringify(students, null, 2) + ';\n\n' +
+    'const STAFF = ' + JSON.stringify(staff, null, 2) + ';\n';
+
+  btn.disabled = true;
+  st.textContent = 'Сохраняем...'; st.className = 'status';
+
+  try{
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: 'Update content via admin panel',
+        content: b64encodeUtf8(fileText),
+        sha: fileSha
+      })
+    });
+    const json = await res.json();
+    if(res.ok){
+      fileSha = json.content.sha;
+      st.textContent = '✓ Сохранено! Сайт обновится через 1-2 минуты.';
+      st.className = 'status ok';
+    }else{
+      st.textContent = 'Ошибка ' + res.status + ': ' + (json.message || '');
+      st.className = 'status err';
+    }
+  }catch(err){
+    st.textContent = 'Ошибка сети: ' + err.message;
+    st.className = 'status err';
+  }
+  btn.disabled = false;
+}
+
+// ---------- УТИЛИТЫ ----------
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
