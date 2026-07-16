@@ -1022,10 +1022,69 @@ footer{
   z-index:1;
 }
 
+
+/* ==== БУРГЕР-МЕНЮ (мобилка) ==== */
+.burger{
+  display:none;
+  flex-direction:column;
+  gap:5px;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:12px 11px;
+  cursor:pointer;
+}
+.burger span{
+  display:block;
+  width:20px;
+  height:2px;
+  background:var(--ink);
+  border-radius:2px;
+  transition:transform .25s ease, opacity .2s ease;
+}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.mobile-menu{
+  position:fixed;
+  inset:0;
+  z-index:15;
+  background:rgba(11,11,20,0.96);
+  backdrop-filter:blur(20px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding-top:70px;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .25s ease, visibility 0s linear .25s;
+}
+.mobile-menu.open{
+  opacity:1;
+  visibility:visible;
+  transition:opacity .25s ease, visibility 0s linear 0s;
+}
+.mobile-menu a{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--ink);
+  text-decoration:none;
+  padding:14px 28px;
+  border-radius:16px;
+  transition:background .2s ease, color .2s ease;
+}
+.mobile-menu a:hover{background:var(--glass-strong); color:var(--cyan);}
+
 /* ==== MOBILE ==== */
 @media (max-width: 860px){
-  header{padding:16px 22px;}
+  header{padding:14px 18px;}
   header nav{display:none;}
+  header > div:not(.brandmark){display:none;}
+  .burger{display:flex;}
   .hero{padding:64px 22px 46px;}
   .board-section, .info-hub{padding:36px 22px 64px;}
   .about-strip, .specialties-section, .apply-section, .apply-form-section, .contacts-section{padding-left:22px; padding-right:22px;}

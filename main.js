@@ -2,6 +2,39 @@
 // ОБЩАЯ ЛОГИКА САЙТА (работает на всех страницах)
 // ==================================================
 
+
+// ==== МОБИЛЬНОЕ МЕНЮ (бургер) ====
+(function initMobileMenu(){
+  const header = document.querySelector('header');
+  const nav = header && header.querySelector('nav');
+  if(!header || !nav) return;
+
+  const burger = document.createElement('button');
+  burger.className = 'burger';
+  burger.setAttribute('aria-label', 'Меню');
+  burger.innerHTML = '<span></span><span></span><span></span>';
+  header.appendChild(burger);
+
+  const menu = document.createElement('div');
+  menu.className = 'mobile-menu';
+  menu.innerHTML = nav.innerHTML;
+  document.body.appendChild(menu);
+
+  function closeMenu(){
+    menu.classList.remove('open');
+    burger.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  burger.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    burger.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+})();
+
 // ==== МОДАЛКА СТУДЕНТОВ (index.html) ====
 const overlay = document.getElementById('modalOverlay');
 
