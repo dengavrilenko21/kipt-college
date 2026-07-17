@@ -1173,3 +1173,77 @@ footer{
   .photo-placeholder, .teacher-photo{width:100px; height:125px;}
   .staff-search{max-width:none;}
 }
+
+/* ==================================================
+   АНИМАЦИИ
+   ================================================== */
+
+/* -- появление hero при загрузке (каскадом) -- */
+@keyframes heroIn{
+  from{opacity:0; transform:translateY(24px);}
+  to{opacity:1; transform:translateY(0);}
+}
+.hero .eyebrow{animation:heroIn .7s cubic-bezier(.2,.8,.25,1) both;}
+.hero h1.title{animation:heroIn .7s cubic-bezier(.2,.8,.25,1) .12s both;}
+.hero .subtitle-row{animation:heroIn .7s cubic-bezier(.2,.8,.25,1) .24s both;}
+.hero .cta-row{animation:heroIn .7s cubic-bezier(.2,.8,.25,1) .36s both;}
+
+/* -- живой градиент на акцентах -- */
+@keyframes gradShift{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+h1.title .accent,
+.stat b,
+.chip-role,
+.modal-role,
+.director-title{
+  background-size:200% 200%;
+  animation:gradShift 6s ease infinite;
+}
+.btn.primary,
+.tab-btn.active{
+  background-size:200% 200%;
+  animation:gradShift 5s ease infinite;
+}
+
+/* -- дыхание фоновых свечений -- */
+@keyframes glowDrift{
+  0%{transform:scale(1) translate(0,0); opacity:1;}
+  50%{transform:scale(1.08) translate(1.5%, -1%); opacity:0.85;}
+  100%{transform:scale(1) translate(0,0); opacity:1;}
+}
+.blueprint-grid{animation:glowDrift 14s ease-in-out infinite;}
+
+/* -- пульс точки в логотипе -- */
+@keyframes dotPulse{
+  0%, 100%{box-shadow:0 0 10px rgba(139,92,246,0.7);}
+  50%{box-shadow:0 0 22px rgba(34,211,238,0.9);}
+}
+.brandmark .dot{animation:dotPulse 3s ease-in-out infinite;}
+
+/* -- появление блоков при скролле -- */
+.reveal{
+  opacity:0;
+  transform:translateY(26px);
+  transition:opacity .7s cubic-bezier(.2,.8,.25,1), transform .7s cubic-bezier(.2,.8,.25,1);
+  will-change:opacity, transform;
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* -- лёгкое свечение при наведении на строки специальностей -- */
+.spec-row:hover .spec-code{text-shadow:0 0 14px rgba(34,211,238,0.8);}
+
+/* -- отключение анимаций для чувствительных к движению -- */
+@media (prefers-reduced-motion: reduce){
+  .hero .eyebrow, .hero h1.title, .hero .subtitle-row, .hero .cta-row{animation:none;}
+  h1.title .accent, .stat b, .chip-role, .modal-role, .director-title,
+  .btn.primary, .tab-btn.active{animation:none;}
+  .blueprint-grid{animation:none;}
+  .brandmark .dot{animation:none;}
+  .reveal{opacity:1; transform:none; transition:none;}
+}

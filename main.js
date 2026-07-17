@@ -250,3 +250,40 @@ if(applicationForm){
     formStatus.textContent = 'Відповідь приймальної комісії — протягом 1-2 робочих днів';
   };
 }
+
+// ==== ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ ====
+(function initScrollReveal(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // группы: дети появляются по очереди (каскадом)
+  const staggerGroups = ['.spec-grid', '.chips', '.teacher-grid', '.about-stats', '.info-list'];
+  staggerGroups.forEach(sel => {
+    document.querySelectorAll(sel).forEach(group => {
+      Array.from(group.children).forEach((child, i) => {
+        child.classList.add('reveal');
+        child.style.transitionDelay = Math.min(i * 0.06, 0.5) + 's';
+      });
+    });
+  });
+
+  // одиночные блоки
+  const singles = [
+    '.board-heading', '.about-inner', '.director-card', '.apply-inner',
+    '.form-panel', '.contacts-inner', '.tabs-bar', '.tab-lede',
+    '.staff-table-wrap', '.schedule-table'
+  ];
+  singles.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => el.classList.add('reveal'));
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
