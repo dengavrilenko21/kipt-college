@@ -327,3 +327,246 @@ if(applicationForm){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 })();
+
+// ==== НОВОСТИ (index.html) ====
+(function renderNews(){
+  const container = document.getElementById('newsContainer');
+  if(!container || typeof NEWS === 'undefined' || !NEWS.length) return;
+  container.innerHTML = NEWS.map(n => {
+    const d = new Date(n.date);
+    const dateStr = isNaN(d) ? n.date : d.toLocaleDateString('uk-UA', {day:'numeric', month:'long', year:'numeric'});
+    return `
+      <div class="news-card">
+        <div class="news-date">${dateStr}</div>
+        <div class="news-body">
+          <div class="news-title">${n.title}</div>
+          <p class="news-text">${n.text}</p>
+        </div>
+      </div>`;
+  }).join('');
+})();
+
+// ==== ТАЙМЕР ДО КОНЦА ПРИЁМА (в баннере "Вступ") ====
+(function initCountdown(){
+  const banner = document.querySelector('.apply-inner');
+  if(!banner || typeof SETTINGS === 'undefined' || !SETTINGS.admissionDeadline) return;
+
+  const deadline = new Date(SETTINGS.admissionDeadline);
+  if(isNaN(deadline)) return;
+
+  const box = document.createElement('div');
+  box.className = 'countdown';
+  box.innerHTML = `
+    <div class="countdown-title">${SETTINGS.admissionTitle || 'До завершення прийому документів'}</div>
+    <div class="countdown-units">
+      <div class="cd-unit"><span class="cd-num" id="cd-d">0</span><span class="cd-label">дн</span></div>
+      <div class="cd-unit"><span class="cd-num" id="cd-h">0</span><span class="cd-label">год</span></div>
+      <div class="cd-unit"><span class="cd-num" id="cd-m">0</span><span class="cd-label">хв</span></div>
+      <div class="cd-unit"><span class="cd-num" id="cd-s">0</span><span class="cd-label">сек</span></div>
+    </div>`;
+  banner.appendChild(box);
+
+  function tick(){
+    const diff = deadline - new Date();
+    if(diff <= 0){
+      box.innerHTML = '<div class="countdown-title">Прийом документів завершено</div>';
+      clearInterval(timer);
+      return;
+    }
+    const s = Math.floor(diff / 1000);
+    document.getElementById('cd-d').textContent = Math.floor(s / 86400);
+    document.getElementById('cd-h').textContent = Math.floor((s % 86400) / 3600);
+    document.getElementById('cd-m').textContent = Math.floor((s % 3600) / 60);
+    document.getElementById('cd-s').textContent = s % 60;
+  }
+  tick();
+  const timer = setInterval(tick, 1000);
+})();
+
+// ==== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ====
+(function initTheme(){
+  const header = document.querySelector('header');
+  if(!header) return;
+
+  const saved = localStorage.getItem('kipt_theme');
+  if(saved === 'light') document.body.classList.add('light');
+
+  const btn = document.createElement('button');
+  btn.className = 'hdr-btn theme-btn';
+  btn.setAttribute('aria-label', 'Тема');
+  btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+
+  const burger = header.querySelector('.burger');
+  header.insertBefore(btn, burger || null);
+
+  btn.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light');
+    localStorage.setItem('kipt_theme', isLight ? 'light' : 'dark');
+    btn.textContent = isLight ? '🌙' : '☀️';
+  });
+})();
+
+// ==== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА UA/EN ====
+const I18N = {
+  "Головна": "Home",
+  "Спеціальності": "Programs",
+  "Довідник": "Handbook",
+  "Вступ 2026": "Admission 2026",
+  "Контакти": "Contacts",
+  "Фахова передвища освіта · 12 спеціальностей": "Professional pre-higher education · 12 programs",
+  "Конотопський": "Konotop",
+  "індустріально-педагогічний": "Industrial-Pedagogical",
+  "фаховий коледж СумДУ": "Applied College of SumDU",
+  "Готуємо": "We train",
+  "фахових молодших бакалаврів": "applied junior bachelors",
+  ", які збирають код і схеми так само впевнено, як і власне майбутнє. Від інженерії програмного забезпечення до електротехніки — тут навчаються ті, хто завтра будує реальні системи.": " who assemble code and circuits as confidently as their own future. From software engineering to electrical engineering — this is where tomorrow's builders of real systems study.",
+  "Ступінь": "Degree",
+  "фаховий мол. бакалавр": "applied junior bachelor",
+  "Спеціальностей": "Programs",
+  "Місто": "City",
+  "Конотоп": "Konotop",
+  "Заклад": "Institution",
+  "Наші здобувачі →": "Our students →",
+  "Спеціальності коледжу": "College programs",
+  "Про коледж": "About the college",
+  "Хто ми": "Who we are",
+  "Інноваційний багатопрофільний заклад фахової передвищої освіти — відокремлений структурний підрозділ Сумського державного університету. Готує фахових молодших бакалаврів за 12 спеціальностями: від IT та електротехніки до будівництва, фінансів і соціальної роботи.": "An innovative multi-profile institution of professional pre-higher education — a separate structural unit of Sumy State University. It trains applied junior bachelors in 12 programs: from IT and electrical engineering to construction, finance and social work.",
+  "спеціальностей": "programs",
+  "ступінь: фаховий мол. бакалавр": "degree: applied junior bachelor",
+  "відокремлений підрозділ університету": "separate unit of the university",
+  "вул. М. Немолота, 12": "12 M. Nemolota St.",
+  "Новини та оголошення": "News & announcements",
+  "// АКТУАЛЬНЕ": "// LATEST",
+  "Слово директора": "Director's word",
+  "// КЕРІВНИЦТВО": "// LEADERSHIP",
+  "Кращі здобувачі коледжу": "Top students of the college",
+  "// 2 КУРС · ДІЮЧА ЗБІРКА": "// 2ND YEAR · ACTIVE BUILD",
+  "Детальніше →": "More →",
+  "Вступна кампанія 2026": "Admission campaign 2026",
+  "Твоє місце в майбутньому вже креслять.": "Your place in the future is already being drafted.",
+  "Подати документи": "Apply now",
+  "Умови вступу": "Admission terms",
+  "Написати приймальній комісії": "Contact the admissions office",
+  "// ФАХОВИЙ МОЛОДШИЙ БАКАЛАВР · 12 СПЕЦІАЛЬНОСТЕЙ": "// APPLIED JUNIOR BACHELOR · 12 PROGRAMS",
+  "Для випускників 9–11 класів:": "For graduates of grades 9–11:",
+  "Для випускників ДПТНЗ (професійна освіта):": "For vocational school graduates (professional education):",
+  "Інженерія програмного забезпечення": "Software Engineering",
+  "IT · код": "IT · code",
+  "Електрична інженерія": "Electrical Engineering",
+  "струм · схеми": "current · circuits",
+  "Будівництво та цивільна інженерія": "Construction and Civil Engineering",
+  "будівництво": "construction",
+  "Автомобільний транспорт": "Automobile Transport",
+  "транспорт": "transport",
+  "Фінанси, банківська справа, страхування та фондовий ринок": "Finance, Banking, Insurance and Stock Market",
+  "економіка": "economics",
+  "Соціальна робота та консультування": "Social Work and Counseling",
+  "соц. сфера": "social sphere",
+  "Торгівля": "Trade",
+  "бізнес": "business",
+  "Професійна освіта. Цифрові технології": "Professional Education. Digital Technologies",
+  "Професійна освіта. Електротехніка": "Professional Education. Electrical Engineering",
+  "Професійна освіта. Зварювання": "Professional Education. Welding",
+  "метал": "metal",
+  "Професійна освіта. Будівництво": "Professional Education. Construction",
+  "Професійна освіта. Транспорт": "Professional Education. Transport",
+  "Довідник для абітурієнтів і студентів": "Handbook for applicants and students",
+  "// ОБЕРИ ВКЛАДКУ": "// PICK A TAB",
+  "Викладачі": "Teachers",
+  "Весь колектив": "Full staff",
+  "Стипендія": "Scholarship",
+  "Гуртожиток": "Dormitory",
+  "Розклад": "Schedule",
+  "Студентське життя": "Student life",
+  "Гордість коледжу": "College pride",
+  "Практика": "Internship",
+  "Пара": "Class",
+  "Час": "Time",
+  "Пн–Пт": "Mon–Fri",
+  "Подати заявку на вступ": "Apply for admission",
+  "// ФОРМА · ПРИЙМАЛЬНА КОМІСІЯ": "// FORM · ADMISSIONS OFFICE",
+  "ПІБ абітурієнта": "Full name",
+  "Дата народження": "Date of birth",
+  "Телефон": "Phone",
+  "Обрана спеціальність": "Chosen program",
+  "Оберіть спеціальність": "Choose a program",
+  "Освіта на момент вступу": "Education at the time of application",
+  "Оберіть варіант": "Choose an option",
+  "9 класів": "9 grades",
+  "11 класів": "11 grades",
+  "Диплом кваліфікованого робітника": "Qualified worker diploma",
+  "Інше / ще не визначився(лась)": "Other / undecided",
+  "Коментар / питання до приймальної комісії": "Comment / question to the admissions office",
+  "необов'язкове поле": "optional field",
+  "Даю згоду на обробку персональних даних відповідно до Закону України «Про захист персональних даних» для цілей розгляду заявки на вступ.": "I consent to the processing of my personal data in accordance with the Law of Ukraine \"On Personal Data Protection\" for the purpose of reviewing my application.",
+  "Надіслати заявку →": "Send application →",
+  "Відповідь приймальної комісії — протягом 1-2 робочих днів": "The admissions office will reply within 1-2 business days",
+  "// ПРИЙМАЛЬНА КОМІСІЯ": "// ADMISSIONS OFFICE",
+  "Адреса": "Address",
+  "Приймальна комісія": "Admissions office",
+  "Факс": "Fax",
+  "Сайт": "Website",
+  "Ел. бібліотека": "E-library",
+  "Відкрити в Google Maps →": "Open in Google Maps →",
+  "м. Конотоп, вул. М. Немолота, 12, Сумська обл.": "12 M. Nemolota St., Konotop, Sumy region",
+  "До завершення прийому документів": "Until the application deadline",
+  "Прийом документів завершено": "Application period is over",
+  "дн": "d",
+  "год": "h",
+  "хв": "m",
+  "сек": "s",
+  "© ВСП «Конотопський індустріально-педагогічний фаховий коледж СумДУ» · м. Конотоп, вул. М. Немолота, 12": "© Konotop Industrial-Pedagogical Applied College of SumDU · 12 M. Nemolota St., Konotop",
+  "Прототип · макет не є офіційним сайтом коледжу": "Prototype · this mockup is not the official college website"
+};
+
+let i18nNodes = null;
+
+function applyLang(lang){
+  if(!i18nNodes){
+    i18nNodes = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let n;
+    while(n = walker.nextNode()){
+      const t = n.nodeValue.trim();
+      if(t && I18N[t]){
+        i18nNodes.push([n, n.nodeValue, n.nodeValue.replace(t, I18N[t])]);
+      }
+    }
+    document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
+      const p = el.getAttribute('placeholder');
+      if(I18N[p]) i18nNodes.push([el, p, I18N[p], 'placeholder']);
+    });
+  }
+  i18nNodes.forEach(item => {
+    if(item[3] === 'placeholder'){
+      item[0].setAttribute('placeholder', lang === 'en' ? item[2] : item[1]);
+    } else {
+      item[0].nodeValue = lang === 'en' ? item[2] : item[1];
+    }
+  });
+  document.documentElement.lang = lang === 'en' ? 'en' : 'uk';
+  localStorage.setItem('kipt_lang', lang);
+  const btn = document.querySelector('.lang-btn');
+  if(btn) btn.textContent = lang === 'en' ? 'UA' : 'EN';
+}
+
+(function initLang(){
+  const header = document.querySelector('header');
+  if(!header) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'hdr-btn lang-btn';
+  btn.setAttribute('aria-label', 'Мова / Language');
+  btn.textContent = 'EN';
+
+  const themeBtn = header.querySelector('.theme-btn');
+  const burger = header.querySelector('.burger');
+  header.insertBefore(btn, themeBtn || burger || null);
+
+  btn.addEventListener('click', () => {
+    const next = (localStorage.getItem('kipt_lang') === 'en') ? 'ua' : 'en';
+    applyLang(next);
+  });
+
+  if(localStorage.getItem('kipt_lang') === 'en') applyLang('en');
+})();

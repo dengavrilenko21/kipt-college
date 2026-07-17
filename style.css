@@ -1323,3 +1323,145 @@ h1.title .accent,
 @media (prefers-reduced-motion: reduce){
   .to-top{transition:none;}
 }
+
+/* ==== НОВОСТИ ==== */
+.news-section{
+  position:relative;
+  max-width:1280px;
+  margin:0 auto;
+  padding:20px 48px 70px;
+}
+.news-card{
+  display:flex;
+  gap:26px;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:20px 24px;
+  margin-bottom:12px;
+  backdrop-filter:blur(8px);
+  transition:border-color .2s ease, transform .2s ease;
+}
+.news-card:hover{border-color:rgba(139,92,246,0.4); transform:translateX(5px);}
+.news-date{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  color:var(--cyan);
+  white-space:nowrap;
+  padding-top:3px;
+  min-width:130px;
+}
+.news-title{font-family:'Space Grotesk', sans-serif; font-size:17px; font-weight:700; margin-bottom:6px;}
+.news-text{font-size:14.5px; line-height:1.65; color:var(--muted);}
+
+/* ==== ТАЙМЕР ==== */
+.countdown{
+  flex-basis:100%;
+  border-top:1px solid var(--line);
+  padding-top:24px;
+  margin-top:8px;
+}
+.countdown-title{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.countdown-units{display:flex; gap:14px; flex-wrap:wrap;}
+.cd-unit{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  min-width:74px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  padding:14px 10px;
+}
+.cd-num{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:30px;
+  font-weight:700;
+  background:var(--grad);
+  background-size:200% 200%;
+  animation:gradShift 5s ease infinite;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  font-variant-numeric:tabular-nums;
+}
+.cd-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--muted);
+}
+
+/* ==== КНОПКИ В ШАПКЕ (тема / язык) ==== */
+.hdr-btn{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  border:1px solid var(--glass-border);
+  background:var(--glass);
+  color:var(--ink);
+  font-size:14px;
+  font-weight:700;
+  font-family:'Manrope', sans-serif;
+  cursor:pointer;
+  margin-left:8px;
+  transition:all .2s ease;
+}
+.hdr-btn:hover{border-color:rgba(255,255,255,0.3); transform:translateY(-2px);}
+
+/* ==== СВЕТЛАЯ ТЕМА ==== */
+body.light{
+  --bg: #ECEAE4;
+  --glass: rgba(28,27,24,0.045);
+  --glass-strong: rgba(28,27,24,0.08);
+  --glass-border: rgba(28,27,24,0.13);
+  --panel: rgba(28,27,24,0.06);
+  --ink: #1C1B18;
+  --text: #1C1B18;
+  --muted: #6E6B63;
+  --line: rgba(28,27,24,0.12);
+}
+body.light .blueprint-grid{opacity:0.55;}
+body.light header{background:rgba(236,234,228,0.85);}
+body.light .mobile-menu{background:rgba(236,234,228,0.97);}
+body.light .modal-card{background:#F7F6F2;}
+body.light .to-top{background:rgba(247,246,242,0.85);}
+body.light .field select option{background:#F7F6F2; color:var(--ink);}
+body.light .chip::before{color:#fff;}
+body.light .spec-tag,
+body.light .subject-tag,
+body.light .social-row a,
+body.light .modal-close,
+body.light .modal-stats,
+body.light .cd-unit,
+body.light .schedule-table th,
+body.light .staff-table th{background:rgba(28,27,24,0.05);}
+body.light .field input,
+body.light .field select,
+body.light .field textarea{background:rgba(28,27,24,0.05);}
+body.light .apply-inner{
+  background:
+    radial-gradient(400px 200px at 20% 0%, rgba(139,92,246,0.22), transparent 70%),
+    radial-gradient(400px 240px at 85% 100%, rgba(34,211,238,0.16), transparent 70%),
+    rgba(28,27,24,0.04);
+}
+body.light .hdr-btn:hover{border-color:rgba(28,27,24,0.3);}
+body.light .tab-btn:hover{border-color:rgba(28,27,24,0.35);}
+body.light .btn:not(.primary):hover{border-color:rgba(28,27,24,0.35);}
+
+@media (max-width: 860px){
+  .news-section{padding-left:22px; padding-right:22px;}
+  .news-card{flex-direction:column; gap:8px;}
+  .news-date{min-width:0;}
+  .cd-unit{min-width:64px; padding:10px 8px;}
+  .cd-num{font-size:24px;}
+  .hdr-btn{width:38px; height:38px; margin-left:6px;}
+}

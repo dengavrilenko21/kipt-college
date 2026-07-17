@@ -102,6 +102,8 @@
       <div class="tab active" data-panel="students" onclick="showPanel('students')">Студенты</div>
       <div class="tab" data-panel="director" onclick="showPanel('director')">Директор</div>
       <div class="tab" data-panel="teachers" onclick="showPanel('teachers')">Викладачі</div>
+      <div class="tab" data-panel="news" onclick="showPanel('news')">Новости</div>
+      <div class="tab" data-panel="settings" onclick="showPanel('settings')">Таймер</div>
       <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
     </div>
 
@@ -110,6 +112,15 @@
     <div class="panel" id="panel-director"></div>
 
     <div class="panel" id="panel-teachers"></div>
+
+    <div class="panel" id="panel-news">
+      <div class="searchrow">
+        <button class="btn" onclick="addNews()">+ Добавить новость</button>
+      </div>
+      <div id="newsEditList"></div>
+    </div>
+
+    <div class="panel" id="panel-settings"></div>
 
     <div class="panel" id="panel-staff">
       <div class="searchrow">
@@ -138,6 +149,8 @@ let students = {};
 let staff = [];
 let director = {};
 let teachers = [];
+let news = [];
+let settings = {};
 
 // ---------- UTF-8 <-> base64 ----------
 function b64decodeUtf8(b64){
@@ -181,12 +194,16 @@ async function login(){
       STUDENTS: typeof STUDENTS !== 'undefined' ? STUDENTS : {},
       STAFF: typeof STAFF !== 'undefined' ? STAFF : [],
       DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
-      TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : []
+      TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
+      NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
+      SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {}
     };`)();
     students = parsed.STUDENTS;
     staff = parsed.STAFF;
     director = parsed.DIRECTOR || { img:'', name:'', title:'', message:'', facts:[], quote:'' };
     teachers = parsed.TEACHERS;
+    news = parsed.NEWS;
+    settings = parsed.SETTINGS || {};
 
     if(document.getElementById('rememberToken').checked){
       localStorage.setItem('kipt_admin_token', token);
@@ -197,6 +214,8 @@ async function login(){
     renderStudentsEditor();
     renderDirectorEditor();
     renderTeachersEditor();
+    renderNewsEditor();
+    renderSettingsEditor();
     renderStaffEditor();
   }catch(err){
     st.textContent = 'Ошибка: ' + err.message;
@@ -329,6 +348,73 @@ function collectTeachers(){
   });
 }
 
+
+// ---------- РЕДАКТОР НОВОСТЕЙ ----------
+function renderNewsEditor(){
+  collectNewsOpen();
+  const list = document.getElementById('newsEditList');
+  list.innerHTML = news.map((n, i) => `
+    <div class="card news-edit" data-i="${i}">
+      <div class="grid2">
+        <div><label>Дата (ГГГГ-ММ-ДД)</label><input data-f="date" value="${escAttr(n.date)}"></div>
+        <div><label>Заголовок</label><input data-f="title" value="${escAttr(n.title)}"></div>
+      </div>
+      <label>Текст новости</label>
+      <textarea data-f="text" style="min-height:80px;">${escHtml(n.text)}</textarea>
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeNews(${i})">Удалить</button>
+      </div>
+    </div>
+  `).join('') || '<p class="hint">Новостей пока нет — добавь первую</p>';
+}
+
+function collectNewsOpen(){
+  document.querySelectorAll('.news-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !news[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    news[i].date = g('date');
+    news[i].title = g('title');
+    news[i].text = g('text');
+  });
+}
+
+function addNews(){
+  collectNewsOpen();
+  const today = new Date().toISOString().slice(0, 10);
+  news.unshift({ date: today, title: 'Нова новина', text: 'Текст новини...' });
+  renderNewsEditor();
+}
+
+function removeNews(i){
+  if(!confirm('Удалить новость «' + news[i].title + '»?')) return;
+  collectNewsOpen();
+  news.splice(i, 1);
+  renderNewsEditor();
+}
+
+// ---------- РЕДАКТОР ТАЙМЕРА ----------
+function renderSettingsEditor(){
+  const root = document.getElementById('panel-settings');
+  const dl = settings.admissionDeadline || '';
+  root.innerHTML = `
+    <div class="card">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;">Таймер вступительной кампании</h3>
+      <div class="hint" style="margin-top:4px;">Показывается в баннере «Вступ 2026» на всех страницах, где он есть</div>
+      <label>Дедлайн (дата и время)</label>
+      <input type="datetime-local" id="set-deadline" value="${escAttr(dl)}">
+      <label>Заголовок таймера</label>
+      <input id="set-title" value="${escAttr(settings.admissionTitle || '')}">
+    </div>`;
+}
+
+function collectSettings(){
+  const g = id => { const el = document.getElementById(id); return el ? el.value : null; };
+  if(g('set-deadline') === null) return;
+  settings.admissionDeadline = g('set-deadline');
+  settings.admissionTitle = g('set-title');
+}
+
 // ---------- РЕДАКТОР СОСТАВА ----------
 function renderStaffEditor(){
   collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
@@ -387,6 +473,8 @@ async function saveAll(){
   collectStudents();
   collectDirector();
   collectTeachers();
+  collectNewsOpen();
+  collectSettings();
   collectStaffOpen();
 
   const fileText =
@@ -394,7 +482,9 @@ async function saveAll(){
     'const STUDENTS = ' + JSON.stringify(students, null, 2) + ';\n\n' +
     'const STAFF = ' + JSON.stringify(staff, null, 2) + ';\n\n' +
     'const DIRECTOR = ' + JSON.stringify(director, null, 2) + ';\n\n' +
-    'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n';
+    'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n\n' +
+    'const NEWS = ' + JSON.stringify(news, null, 2) + ';\n\n' +
+    'const SETTINGS = ' + JSON.stringify(settings, null, 2) + ';\n';
 
   btn.disabled = true;
   st.textContent = 'Сохраняем...'; st.className = 'status';
