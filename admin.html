@@ -97,10 +97,16 @@
   <div class="hidden" id="editor">
     <div class="tabs">
       <div class="tab active" data-panel="students" onclick="showPanel('students')">Студенты</div>
+      <div class="tab" data-panel="director" onclick="showPanel('director')">Директор</div>
+      <div class="tab" data-panel="teachers" onclick="showPanel('teachers')">Викладачі</div>
       <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
     </div>
 
     <div class="panel active" id="panel-students"></div>
+
+    <div class="panel" id="panel-director"></div>
+
+    <div class="panel" id="panel-teachers"></div>
 
     <div class="panel" id="panel-staff">
       <div class="searchrow">
@@ -127,6 +133,8 @@ let token = '';
 let fileSha = '';
 let students = {};
 let staff = [];
+let director = {};
+let teachers = [];
 
 // ---------- UTF-8 <-> base64 ----------
 function b64decodeUtf8(b64){
@@ -166,9 +174,16 @@ async function login(){
     const json = await res.json();
     fileSha = json.sha;
     const code = b64decodeUtf8(json.content);
-    const parsed = new Function(code + ';return {STUDENTS, STAFF};')();
+    const parsed = new Function(code + `;return {
+      STUDENTS: typeof STUDENTS !== 'undefined' ? STUDENTS : {},
+      STAFF: typeof STAFF !== 'undefined' ? STAFF : [],
+      DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
+      TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : []
+    };`)();
     students = parsed.STUDENTS;
     staff = parsed.STAFF;
+    director = parsed.DIRECTOR || { img:'', name:'', title:'', message:'', facts:[], quote:'' };
+    teachers = parsed.TEACHERS;
 
     if(document.getElementById('rememberToken').checked){
       localStorage.setItem('kipt_admin_token', token);
@@ -177,6 +192,8 @@ async function login(){
     document.getElementById('loginCard').classList.add('hidden');
     document.getElementById('editor').classList.remove('hidden');
     renderStudentsEditor();
+    renderDirectorEditor();
+    renderTeachersEditor();
     renderStaffEditor();
   }catch(err){
     st.textContent = 'Ошибка: ' + err.message;
@@ -240,6 +257,75 @@ function collectStudents(){
   });
 }
 
+
+// ---------- РЕДАКТОР ДИРЕКТОРА ----------
+function renderDirectorEditor(){
+  const root = document.getElementById('panel-director');
+  const d = director;
+  root.innerHTML = `
+    <div class="card">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;">Слово директора (главная страница)</h3>
+      <div class="grid2">
+        <div><label>Имя (ПІБ)</label><input id="dir-name" value="${escAttr(d.name)}"></div>
+        <div><label>Должность / подпись</label><input id="dir-title" value="${escAttr(d.title)}"></div>
+      </div>
+      <label>Путь к фото</label><input id="dir-img" value="${escAttr(d.img)}">
+      <div class="hint" style="margin-top:4px;">Фото должно лежать в репозитории, например <code>images/students/denys.jpg</code></div>
+      <label>Обращение (абзац)</label>
+      <textarea id="dir-message" style="min-height:80px;">${escHtml(d.message)}</textarea>
+      <label>Факты (по одному в строке)</label>
+      <textarea id="dir-facts" style="min-height:100px;">${escHtml((d.facts || []).join('\n'))}</textarea>
+      <label>Цитата</label>
+      <textarea id="dir-quote">${escHtml(d.quote)}</textarea>
+    </div>`;
+}
+
+function collectDirector(){
+  const g = id => { const el = document.getElementById(id); return el ? el.value : null; };
+  if(g('dir-name') === null) return;
+  director.name = g('dir-name');
+  director.title = g('dir-title');
+  director.img = g('dir-img');
+  director.message = g('dir-message');
+  director.facts = g('dir-facts').split('\n').map(x => x.trim()).filter(Boolean);
+  director.quote = g('dir-quote');
+}
+
+// ---------- РЕДАКТОР ВИКЛАДАЧЕЙ ----------
+function renderTeachersEditor(){
+  const root = document.getElementById('panel-teachers');
+  root.innerHTML = teachers.map((t, i) => `
+    <div class="card teacher-edit" data-i="${i}">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:17px;">${escHtml(t.name)}</h3>
+      <div class="grid2">
+        <div><label>ПІБ</label><input data-f="name" value="${escAttr(t.name)}"></div>
+        <div><label>Категория / звание</label><input data-f="meta" value="${escAttr(t.meta)}"></div>
+      </div>
+      <label>Путь к фото</label><input data-f="img" value="${escAttr(t.img)}">
+      <label>Образование</label>
+      <textarea data-f="edu">${escHtml(t.edu)}</textarea>
+      <label>Повышение квалификации</label>
+      <textarea data-f="quals">${escHtml(t.quals)}</textarea>
+      <label>Дисциплины / специальности (по одной в строке)</label>
+      <textarea data-f="subjects" style="min-height:100px;">${escHtml((t.subjects || []).join('\n'))}</textarea>
+    </div>
+  `).join('');
+}
+
+function collectTeachers(){
+  document.querySelectorAll('.teacher-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !teachers[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    teachers[i].name = g('name');
+    teachers[i].meta = g('meta');
+    teachers[i].img = g('img');
+    teachers[i].edu = g('edu');
+    teachers[i].quals = g('quals');
+    teachers[i].subjects = g('subjects').split('\n').map(x => x.trim()).filter(Boolean);
+  });
+}
+
 // ---------- РЕДАКТОР СОСТАВА ----------
 function renderStaffEditor(){
   collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
@@ -296,12 +382,16 @@ async function saveAll(){
   const st = document.getElementById('saveStatus');
   const btn = document.getElementById('saveBtn');
   collectStudents();
+  collectDirector();
+  collectTeachers();
   collectStaffOpen();
 
   const fileText =
     '// Файл сгенерирован админ-панелью\n\n' +
     'const STUDENTS = ' + JSON.stringify(students, null, 2) + ';\n\n' +
-    'const STAFF = ' + JSON.stringify(staff, null, 2) + ';\n';
+    'const STAFF = ' + JSON.stringify(staff, null, 2) + ';\n\n' +
+    'const DIRECTOR = ' + JSON.stringify(director, null, 2) + ';\n\n' +
+    'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n';
 
   btn.disabled = true;
   st.textContent = 'Сохраняем...'; st.className = 'status';

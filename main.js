@@ -97,6 +97,50 @@ document.addEventListener('keydown', (e) => {
   `).join('');
 })();
 
+
+// ==== РЕНДЕР ДИРЕКТОРА (index.html) ====
+(function renderDirector(){
+  const container = document.getElementById('directorContainer');
+  if(!container || typeof DIRECTOR === 'undefined') return;
+  const d = DIRECTOR;
+  container.innerHTML = `
+    <div class="director-card">
+      <div class="director-photo"><img src="${d.img}" alt="${d.name}"></div>
+      <div class="director-info">
+        <div class="director-name">${d.name}</div>
+        <div class="director-title">${d.title}</div>
+        <p class="director-message">${d.message}</p>
+        <ul class="info-list">
+          ${d.facts.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        <div class="director-quote">${d.quote}</div>
+      </div>
+    </div>
+  `;
+})();
+
+// ==== РЕНДЕР ВИКЛАДАЧЕЙ (dovidnyk.html) ====
+(function renderTeachers(){
+  const grid = document.getElementById('teacherGrid');
+  if(!grid || typeof TEACHERS === 'undefined') return;
+  grid.innerHTML = TEACHERS.map(t => `
+    <div class="teacher-card">
+      <div class="teacher-photo">
+        <img src="${t.img}" alt="${t.name}">
+      </div>
+      <div class="teacher-info">
+        <div class="teacher-name">${t.name}</div>
+        <div class="teacher-meta">${t.meta}</div>
+        <div class="teacher-edu"><span>Освіта:</span> ${t.edu}</div>
+        <div class="teacher-quals">${t.quals}</div>
+        <div class="subject-tags">
+          ${t.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+})();
+
 // ==== ВКЛАДКИ (dovidnyk.html) ====
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));

@@ -1023,6 +1023,69 @@ footer{
 }
 
 
+
+/* ==== ДИРЕКТОР ==== */
+.director-section{
+  position:relative;
+  max-width:1280px;
+  margin:0 auto;
+  padding:20px 48px 70px;
+}
+.director-card{
+  display:flex;
+  gap:40px;
+  background:
+    radial-gradient(400px 240px at 0% 0%, rgba(139,92,246,0.18), transparent 70%),
+    var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  padding:40px;
+  flex-wrap:wrap;
+  backdrop-filter:blur(10px);
+}
+.director-photo{
+  width:220px;
+  flex-shrink:0;
+  aspect-ratio:4/5;
+  overflow:hidden;
+  border-radius:20px;
+  border:1px solid var(--glass-border);
+}
+.director-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.director-info{flex:1; min-width:260px;}
+.director-name{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:4px;
+}
+.director-title{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:18px;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.director-message{
+  font-size:16px;
+  line-height:1.7;
+  color:var(--muted);
+  margin-bottom:20px;
+  max-width:60ch;
+}
+.director-card .info-list{margin-bottom:20px;}
+.director-quote{
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--muted);
+  font-style:italic;
+  border-left:3px solid var(--violet);
+  padding-left:16px;
+}
+
 /* ==== БУРГЕР-МЕНЮ (мобилка) ==== */
 .burger{
   display:none;
@@ -1104,6 +1167,9 @@ footer{
   .contacts-inner{grid-template-columns:1fr;}
   .contacts-col:first-child{border-right:none; border-bottom:1px solid var(--line);}
   .teacher-card{flex-direction:column; align-items:flex-start;}
+  .director-section{padding-left:22px; padding-right:22px;}
+  .director-card{flex-direction:column; padding:26px 22px;}
+  .director-photo{width:150px;}
   .photo-placeholder, .teacher-photo{width:100px; height:125px;}
   .staff-search{max-width:none;}
 }
