@@ -287,3 +287,24 @@ if(applicationForm){
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 })();
+
+// ==== КАРТА В КОНТАКТАХ ====
+(function addContactsMap(){
+  const contacts = document.querySelector('.contacts-section');
+  if(!contacts || contacts.querySelector('.map-wrap')) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'map-wrap';
+  wrap.innerHTML = `
+    <iframe
+      src="https://www.google.com/maps?q=51.2248908,33.2270324&hl=uk&z=16&output=embed"
+      loading="lazy"
+      allowfullscreen
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Карта — ВСП КІПФК СумДУ, вул. М. Немолота, 12, Конотоп"></iframe>
+    <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=51.2248908,33.2270324" target="_blank" rel="noopener">
+      Відкрити в Google Maps →
+    </a>
+  `;
+  contacts.appendChild(wrap);
+})();
