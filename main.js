@@ -308,3 +308,22 @@ if(applicationForm){
   `;
   contacts.appendChild(wrap);
 })();
+
+// ==== КНОПКА "НАВЕРХ" ====
+(function initToTop(){
+  const btn = document.createElement('button');
+  btn.className = 'to-top';
+  btn.setAttribute('aria-label', 'Наверх');
+  btn.innerHTML = '↑';
+  document.body.appendChild(btn);
+
+  function toggle(){
+    btn.classList.toggle('show', window.scrollY > 500);
+  }
+  window.addEventListener('scroll', toggle, { passive: true });
+  toggle();
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
