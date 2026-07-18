@@ -161,7 +161,8 @@
 <script>
 const OWNER = 'dengavrilenko21';
 const REPO  = 'kipt-college';
-const FILE  = 'data.js';
+const FILE  = 'content.json';
+const FALLBACK_FILE = 'data.js';
 
 let token = '';
 let fileSha = '';
@@ -197,33 +198,45 @@ async function login(){
   token = document.getElementById('tokenInput').value.trim();
   const st = document.getElementById('loginStatus');
   if(!token){ st.textContent = 'Вставь токен.'; st.className = 'status err'; return; }
-  st.textContent = 'Загружаем data.js из репозитория...'; st.className = 'status';
+  st.textContent = 'Загружаем контент из репозитория...'; st.className = 'status';
 
   try{
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
-      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
-    });
-    if(!res.ok){
-      const t = await res.text();
-      st.textContent = 'Ошибка ' + res.status + ' — проверь токен и права (Contents: Read and write).';
+    const hdrs = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
+    let parsed = null;
+    fileSha = '';
+
+    // 1) пробуем content.json (правки из админки)
+    const resC = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, { headers: hdrs });
+    if(resC.ok){
+      const json = await resC.json();
+      fileSha = json.sha;
+      parsed = JSON.parse(b64decodeUtf8(json.content));
+    } else if(resC.status === 404){
+      // 2) content.json ещё нет — читаем дефолты из data.js
+      const resD = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FALLBACK_FILE}`, { headers: hdrs });
+      if(!resD.ok){
+        st.textContent = 'Ошибка ' + resD.status + ' — проверь токен и права (Contents: Read and write).';
+        st.className = 'status err';
+        return;
+      }
+      const jsonD = await resD.json();
+      const code = b64decodeUtf8(jsonD.content);
+      parsed = new Function(code + `;return {
+        STUDENTS: typeof STUDENTS !== 'undefined' ? STUDENTS : {},
+        STAFF: typeof STAFF !== 'undefined' ? STAFF : [],
+        DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
+        TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
+        NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
+        SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
+        SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
+        HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
+        GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
+      };`)();
+    } else {
+      st.textContent = 'Ошибка ' + resC.status + ' — проверь токен и права (Contents: Read and write).';
       st.className = 'status err';
-      console.error(t);
       return;
     }
-    const json = await res.json();
-    fileSha = json.sha;
-    const code = b64decodeUtf8(json.content);
-    const parsed = new Function(code + `;return {
-      STUDENTS: typeof STUDENTS !== 'undefined' ? STUDENTS : {},
-      STAFF: typeof STAFF !== 'undefined' ? STAFF : [],
-      DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
-      TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
-      NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
-      SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
-      SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
-      HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
-      GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
-    };`)();
     students = parsed.STUDENTS;
     staff = parsed.STAFF;
     director = parsed.DIRECTOR || { img:'', name:'', title:'', message:'', facts:[], quote:'' };
@@ -639,17 +652,18 @@ async function saveAll(){
   collectGalleryOpen();
   collectStaffOpen();
 
-  const fileText =
-    '// Файл сгенерирован админ-панелью\n\n' +
-    'const STUDENTS = ' + JSON.stringify(students, null, 2) + ';\n\n' +
-    'const STAFF = ' + JSON.stringify(staff, null, 2) + ';\n\n' +
-    'const DIRECTOR = ' + JSON.stringify(director, null, 2) + ';\n\n' +
-    'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n\n' +
-    'const NEWS = ' + JSON.stringify(news, null, 2) + ';\n\n' +
-    'const SETTINGS = ' + JSON.stringify(settings, null, 2) + ';\n\n' +
-    'const SPECIALTIES = ' + JSON.stringify(specialties, null, 2) + ';\n\n' +
-    'const HISTORY = ' + JSON.stringify(history, null, 2) + ';\n\n' +
-    'const GALLERY = ' + JSON.stringify(gallery, null, 2) + ';\n';
+  const allData = {
+    STUDENTS: students,
+    STAFF: staff,
+    DIRECTOR: director,
+    TEACHERS: teachers,
+    NEWS: news,
+    SETTINGS: settings,
+    SPECIALTIES: specialties,
+    HISTORY: history,
+    GALLERY: gallery
+  };
+  const fileText = JSON.stringify(allData, null, 2);\n';
 
   btn.disabled = true;
   st.textContent = 'Сохраняем...'; st.className = 'status';
@@ -658,11 +672,10 @@ async function saveAll(){
     const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
       method: 'PUT',
       headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' },
-      body: JSON.stringify({
+      body: JSON.stringify(Object.assign({
         message: 'Update content via admin panel',
-        content: b64encodeUtf8(fileText),
-        sha: fileSha
-      })
+        content: b64encodeUtf8(fileText)
+      }, fileSha ? { sha: fileSha } : {}))
     });
     const json = await res.json();
     if(res.ok){

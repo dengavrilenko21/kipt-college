@@ -1,4 +1,38 @@
 // ==================================================
+// РЕЗОЛВ КОНТЕНТА: content.json (правки из админки)
+// всегда важнее data.js (дефолты из архивов)
+// ==================================================
+const __BASE__ = {
+  STUDENTS: typeof STUDENTS !== 'undefined' ? STUDENTS : {},
+  STAFF: typeof STAFF !== 'undefined' ? STAFF : [],
+  DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
+  TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
+  NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
+  SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
+  SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
+  HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
+  GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
+};
+
+(async function(){
+  let __OVR = null;
+  try{
+    const r = await fetch('content.json', { cache: 'no-store' });
+    if(r.ok) __OVR = await r.json();
+  }catch(e){ /* content.json ещё не создан — используем дефолты */ }
+
+  const __pick = n => (__OVR && __OVR[n] !== undefined && __OVR[n] !== null) ? __OVR[n] : __BASE__[n];
+  const STUDENTS = __pick('STUDENTS');
+  const STAFF = __pick('STAFF');
+  const DIRECTOR = __pick('DIRECTOR');
+  const TEACHERS = __pick('TEACHERS');
+  const NEWS = __pick('NEWS');
+  const SETTINGS = __pick('SETTINGS');
+  const SPECIALTIES = __pick('SPECIALTIES');
+  const HISTORY = __pick('HISTORY');
+  const GALLERY = __pick('GALLERY');
+
+// ==================================================
 // ОБЩАЯ ЛОГИКА САЙТА (работает на всех страницах)
 // ==================================================
 
@@ -937,4 +971,12 @@ if('serviceWorker' in navigator){
 
   // две копии подряд для бесшовного цикла
   strip.innerHTML = `<div class="mq-track">${items}${items}</div>`;
+})();
+
+  // ==== ЭКСПОРТ ФУНКЦИЙ ДЛЯ INLINE-ОБРАБОТЧИКОВ В HTML ====
+  if(typeof switchTab === 'function') window.switchTab = switchTab;
+  if(typeof openModal === 'function') window.openModal = openModal;
+  if(typeof closeModal === 'function') window.closeModal = closeModal;
+  if(typeof closeModalOnBackdrop === 'function') window.closeModalOnBackdrop = closeModalOnBackdrop;
+  if(typeof filterStaff === 'function') window.filterStaff = filterStaff;
 })();
