@@ -558,7 +558,7 @@ const NEWS = [
 
 const SETTINGS = {
   "admissionDeadline": "2026-08-15T18:00",
-  "admissionTitle": "До завершення прийому документів",
+  "admissionTitle": "До конца света",
   "heroImage": "images/gallery/photo1.webp"
 };
 
