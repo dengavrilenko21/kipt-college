@@ -1,7 +1,7 @@
 // Service Worker для КІПФК СумДУ
 // Стратегия: сеть в приоритете, кэш — запасной вариант (офлайн-режим)
 
-const CACHE_NAME = 'kipt-v1';
+const CACHE_NAME = 'kipt-v2';
 
 const CORE_ASSETS = [
   './index.html',
