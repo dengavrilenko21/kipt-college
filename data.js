@@ -810,7 +810,7 @@ const HISTORY = [
 
 const GALLERY = [
   {
-    "img": "images/gallery/photo1.jpg",
+    "img": "images/gallery/photo1.webp",
     "caption": "Навчальний корпус коледжу"
   },
   {
