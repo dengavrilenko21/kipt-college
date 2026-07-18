@@ -2,6 +2,19 @@
 // ОБЩАЯ ЛОГИКА САЙТА (работает на всех страницах)
 // ==================================================
 
+// контейнер для кнопок в правой части шапки
+function hdrActions(){
+  const header = document.querySelector('header');
+  if(!header) return null;
+  let a = header.querySelector('.hdr-actions');
+  if(!a){
+    a = document.createElement('div');
+    a.className = 'hdr-actions';
+    header.appendChild(a);
+  }
+  return a;
+}
+
 
 // ==== МОБИЛЬНОЕ МЕНЮ (бургер) ====
 (function initMobileMenu(){
@@ -13,7 +26,7 @@
   burger.className = 'burger';
   burger.setAttribute('aria-label', 'Меню');
   burger.innerHTML = '<span></span><span></span><span></span>';
-  header.appendChild(burger);
+  hdrActions().appendChild(burger);
 
   const menu = document.createElement('div');
   menu.className = 'mobile-menu';
@@ -396,8 +409,8 @@ if(applicationForm){
   btn.setAttribute('aria-label', 'Тема');
   btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
 
-  const burger = header.querySelector('.burger');
-  header.insertBefore(btn, burger || null);
+  const actions = hdrActions();
+  actions.insertBefore(btn, actions.querySelector('.burger'));
 
   btn.addEventListener('click', () => {
     const isLight = document.body.classList.toggle('light');
@@ -559,9 +572,8 @@ function applyLang(lang){
   btn.setAttribute('aria-label', 'Мова / Language');
   btn.textContent = 'EN';
 
-  const themeBtn = header.querySelector('.theme-btn');
-  const burger = header.querySelector('.burger');
-  header.insertBefore(btn, themeBtn || burger || null);
+  const actions = hdrActions();
+  actions.insertBefore(btn, actions.querySelector('.theme-btn') || actions.querySelector('.burger'));
 
   btn.addEventListener('click', () => {
     const next = (localStorage.getItem('kipt_lang') === 'en') ? 'ua' : 'en';
@@ -569,4 +581,17 @@ function applyLang(lang){
   });
 
   if(localStorage.getItem('kipt_lang') === 'en') applyLang('en');
+})();
+
+// ==== ГРУППИРОВКА КНОПОК ШАПКИ (симметричный layout) ====
+(function groupHeaderControls(){
+  const header = document.querySelector('header');
+  if(!header || header.querySelector('.hdr-right')) return;
+  const right = document.createElement('div');
+  right.className = 'hdr-right';
+  const lang = header.querySelector('.lang-btn');
+  const theme = header.querySelector('.theme-btn');
+  const burger = header.querySelector('.burger');
+  [lang, theme, burger].forEach(el => { if(el) right.appendChild(el); });
+  header.appendChild(right);
 })();
