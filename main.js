@@ -251,7 +251,7 @@ function renderStaff(list){
   const noResults = document.getElementById('staffNoResults');
   const count = document.getElementById('staffCount');
 
-  count.textContent = list.length + ' / ' + STAFF.length;
+  if(count) count.textContent = list.length + ' / ' + STAFF.length;
 
   if(list.length === 0){
     body.innerHTML = '';
