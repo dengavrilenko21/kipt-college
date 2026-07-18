@@ -666,3 +666,30 @@ function applyLang(lang){
     });
   });
 })();
+
+// ==== АВТОПОДСВЕТКА АКТИВНОЙ СТРАНИЦЫ ====
+(function highlightActiveNav(){
+  let page = location.pathname.split('/').pop() || 'index.html';
+  if(!page.endsWith('.html')) page = 'index.html';
+  document.querySelectorAll('header nav a, .mobile-menu a').forEach(a => {
+    const href = (a.getAttribute('href') || '').split('#')[0];
+    if(href === page) a.classList.add('active');
+  });
+})();
+
+// ==== ПРОГРЕСС-БАР ЧТЕНИЯ ====
+(function initProgressBar(){
+  const bar = document.createElement('div');
+  bar.className = 'progress-bar';
+  document.body.appendChild(bar);
+
+  function update(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();

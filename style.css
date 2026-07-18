@@ -1505,3 +1505,41 @@ body.light .spec-badge{color:#0B0B14;}
 @media (max-width: 700px){
   .spec-modal-body{padding:28px 22px;}
 }
+
+/* ==== АКТИВНАЯ СТРАНИЦА В МЕНЮ ==== */
+header nav a.active{
+  color:var(--ink);
+  background:var(--glass-strong);
+  position:relative;
+}
+header nav a.active::after{
+  content:'';
+  position:absolute;
+  bottom:2px;
+  left:50%;
+  transform:translateX(-50%);
+  width:16px;
+  height:2px;
+  border-radius:2px;
+  background:var(--grad);
+}
+.mobile-menu a.active{
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+/* ==== ПРОГРЕСС-БАР ЧТЕНИЯ ==== */
+.progress-bar{
+  position:fixed;
+  top:0;
+  left:0;
+  height:3px;
+  width:0%;
+  background:var(--grad);
+  z-index:60;
+  box-shadow:0 0 12px rgba(139,92,246,0.6);
+  transition:width .1s linear;
+  pointer-events:none;
+}

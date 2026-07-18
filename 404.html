@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — сторінку не знайдено · КІПФК СумДУ</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/kipt-college/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Manrope:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0B14; --ink:#F2F2F8; --muted:#9CA0B4;
+    --glass:rgba(255,255,255,0.045); --glass-border:rgba(255,255,255,0.10);
+    --grad:linear-gradient(120deg,#8B5CF6,#22D3EE);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    overflow:hidden;
+  }
+  .glow{
+    position:fixed; inset:0; pointer-events:none;
+    background:
+      radial-gradient(600px 400px at 20% 15%, rgba(139,92,246,0.18), transparent 65%),
+      radial-gradient(700px 500px at 85% 85%, rgba(34,211,238,0.12), transparent 65%);
+    animation:drift 12s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.07);}
+  }
+  .card{
+    position:relative;
+    text-align:center;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:32px;
+    padding:64px 48px;
+    backdrop-filter:blur(12px);
+    max-width:520px;
+    width:100%;
+  }
+  .code{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(90px,18vw,150px);
+    font-weight:700;
+    line-height:1;
+    background:var(--grad);
+    background-size:200% 200%;
+    animation:shift 5s ease infinite;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:-0.04em;
+  }
+  @keyframes shift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.1em;
+    color:#22D3EE;
+    margin:14px 0 10px;
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:12px;
+  }
+  p{
+    font-size:15px;
+    line-height:1.65;
+    color:var(--muted);
+    margin-bottom:30px;
+  }
+  .btn{
+    display:inline-block;
+    font-size:15px;
+    font-weight:700;
+    padding:15px 30px;
+    border-radius:16px;
+    background:var(--grad);
+    color:#0B0B14;
+    text-decoration:none;
+    transition:transform .2s ease, box-shadow .2s ease;
+    box-shadow:0 8px 30px rgba(139,92,246,0.35);
+  }
+  .btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 40px rgba(34,211,238,0.4);
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="card">
+  <div class="code">404</div>
+  <div class="tag">// СТОРІНКУ НЕ ЗНАЙДЕНО</div>
+  <h1>Схоже, ця сторінка ще не скомпільована</h1>
+  <p>Адресу введено з помилкою, або сторінку було переміщено. Але головна точно на місці — повертайся туди.</p>
+  <a class="btn" href="/kipt-college/">На головну →</a>
+</div>
+</body>
+</html>
