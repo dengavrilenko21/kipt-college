@@ -775,3 +775,257 @@ function applyLang(lang){
   window.addEventListener('resize', update, { passive: true });
   update();
 })();
+
+// ==== ПОИСК ПО ВСЕМУ САЙТУ ====
+(function initSiteSearch(){
+  const header = document.querySelector('header');
+  if(!header) return;
+
+  // кнопка в шапке
+  const btn = document.createElement('button');
+  btn.className = 'hdr-btn search-btn';
+  btn.setAttribute('aria-label', 'Пошук');
+  btn.textContent = '🔍';
+  const right = header.querySelector('.hdr-right');
+  if(right) right.insertBefore(btn, right.firstChild);
+  else header.appendChild(btn);
+
+  // оверлей
+  const overlay = document.createElement('div');
+  overlay.className = 'search-overlay';
+  overlay.innerHTML = `
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Пошук: спеціальності, викладачі, новини...">
+      <button class="search-close" aria-label="Закрити">✕</button>
+    </div>
+    <div class="search-results"></div>`;
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('.search-input');
+  const resultsEl = overlay.querySelector('.search-results');
+
+  // индекс строится один раз из данных data.js
+  let index = null;
+  function buildIndex(){
+    if(index) return index;
+    index = [];
+    const add = (cat, title, text, url) => index.push({cat, title, text: text || '', url});
+
+    if(typeof SPECIALTIES !== 'undefined')
+      Object.entries(SPECIALTIES).forEach(([name, s]) => add('Спеціальність', name, s.desc, 'specialnosti.html'));
+    if(typeof NEWS !== 'undefined')
+      NEWS.forEach(n => add('Новина', n.title, n.text, 'index.html#news'));
+    if(typeof TEACHERS !== 'undefined')
+      TEACHERS.forEach(t => add('Викладач', t.name, t.meta, 'dovidnyk.html#tab-teachers'));
+    if(typeof STAFF !== 'undefined')
+      STAFF.forEach(p => add('Колектив', p.n, p.c, 'dovidnyk.html#tab-allstaff'));
+    if(typeof HISTORY !== 'undefined')
+      HISTORY.forEach(h => add('Історія', h.year + ' — ' + h.title, h.text, 'dovidnyk.html#tab-history'));
+    if(typeof STUDENTS !== 'undefined')
+      Object.values(STUDENTS).forEach(s => add('Здобувач', s.name, s.role, 'index.html#students'));
+    if(typeof DIRECTOR !== 'undefined' && DIRECTOR)
+      add('Керівництво', DIRECTOR.name, DIRECTOR.title, 'index.html#director');
+
+    // статичные разделы
+    add('Розділ', 'Стипендія', 'рейтинги успішності за курсами', 'dovidnyk.html#tab-scholarship');
+    add('Розділ', 'Гуртожиток', 'поселення іногородніх здобувачів', 'dovidnyk.html#tab-dorm');
+    add('Розділ', 'Розклад', 'структура навчального дня', 'dovidnyk.html#tab-schedule');
+    add('Розділ', 'Студентське життя', 'гуртки, самоврядування, волонтерство', 'dovidnyk.html#tab-life');
+    add('Розділ', 'Практика', 'бази практик та працевлаштування', 'dovidnyk.html#tab-practice');
+    add('Розділ', 'Галерея', 'фотографії коледжу', 'dovidnyk.html#tab-gallery');
+    add('Розділ', 'Контакти', 'адреса, телефони, карта', 'kontakty.html');
+    add('Розділ', 'Подати заявку на вступ', 'онлайн-форма приймальної комісії', 'vstup.html');
+    return index;
+  }
+
+  function doSearch(){
+    const q = input.value.trim().toLowerCase();
+    if(q.length < 2){
+      resultsEl.innerHTML = '<div class="search-hint">Введи мінімум 2 символи</div>';
+      return;
+    }
+    const found = buildIndex().filter(item =>
+      item.title.toLowerCase().includes(q) || item.text.toLowerCase().includes(q)
+    ).slice(0, 20);
+
+    if(!found.length){
+      resultsEl.innerHTML = '<div class="search-hint">Нічого не знайдено за запитом «' + input.value + '»</div>';
+      return;
+    }
+    resultsEl.innerHTML = found.map(item => `
+      <a class="sr-item" href="${item.url}">
+        <span class="sr-cat">${item.cat}</span>
+        <span class="sr-title">${item.title}</span>
+        <span class="sr-text">${item.text.slice(0, 90)}${item.text.length > 90 ? '…' : ''}</span>
+      </a>
+    `).join('');
+  }
+
+  function open(){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => input.focus(), 100);
+    doSearch();
+  }
+  function close(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', open);
+  overlay.querySelector('.search-close').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
+  input.addEventListener('input', doSearch);
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') close();
+    if(e.key === '/' && !overlay.classList.contains('open') &&
+       !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+      e.preventDefault(); open();
+    }
+  });
+})();
+
+// ==== ОТКРЫТИЕ ВКЛАДКИ ПО ХЕШУ (для ссылок из поиска) ====
+(function tabDeepLink(){
+  if(!location.hash.startsWith('#tab-')) return;
+  const name = location.hash.slice(5);
+  const panel = document.getElementById('tab-' + name);
+  if(!panel) return;
+  switchTab(name);
+  const hub = document.getElementById('info-hub');
+  if(hub) setTimeout(() => hub.scrollIntoView({behavior:'smooth'}), 100);
+})();
+
+// ==== ОТКРЫТИЕ ВКЛАДКИ ПО ХЭШУ (#tab-...) ====
+(function tabFromHash(){
+  function applyHash(){
+    if(location.hash && location.hash.startsWith('#tab-')){
+      const name = location.hash.slice(5);
+      if(document.getElementById('tab-' + name)) switchTab(name);
+    }
+  }
+  window.addEventListener('hashchange', applyHash);
+  applyHash();
+})();
+
+// ==== ПОИСК ПО ВСЕМУ САЙТУ ====
+(function initSiteSearch(){
+  const right = document.querySelector('.hdr-right');
+  const header = document.querySelector('header');
+  if(!header) return;
+
+  // индекс: собираем всё из data.js + статичные разделы
+  const index = [];
+  function add(cat, title, text, url){
+    index.push({ cat, title, text: (text || '').toLowerCase(), tl: title.toLowerCase(), url });
+  }
+
+  if(typeof SPECIALTIES !== 'undefined'){
+    Object.entries(SPECIALTIES).forEach(([name, s]) => {
+      add('Спеціальність', name, s.desc + ' ' + (s.career || []).join(' '), 'specialnosti.html');
+    });
+  }
+  if(typeof NEWS !== 'undefined'){
+    NEWS.forEach(n => add('Новина', n.title, n.text, 'index.html#news'));
+  }
+  if(typeof TEACHERS !== 'undefined'){
+    TEACHERS.forEach(t => add('Викладач', t.name, t.meta + ' ' + (t.subjects || []).join(' '), 'dovidnyk.html#tab-teachers'));
+  }
+  if(typeof STAFF !== 'undefined'){
+    STAFF.forEach(p => add('Колектив', p.n, p.c + ' ' + p.g, 'dovidnyk.html#tab-allstaff'));
+  }
+  if(typeof HISTORY !== 'undefined'){
+    HISTORY.forEach(h => add('Історія', h.year + ' — ' + h.title, h.text, 'dovidnyk.html#tab-history'));
+  }
+  if(typeof GALLERY !== 'undefined'){
+    GALLERY.forEach(g => add('Галерея', g.caption, '', 'dovidnyk.html#tab-gallery'));
+  }
+  if(typeof STUDENTS !== 'undefined'){
+    Object.values(STUDENTS).forEach(s => add('Здобувач', s.name, s.role, 'index.html#students'));
+  }
+  if(typeof DIRECTOR !== 'undefined' && DIRECTOR){
+    add('Керівництво', DIRECTOR.name, DIRECTOR.title, 'index.html#director');
+  }
+  // статичные разделы
+  add('Розділ', 'Стипендія', 'рейтинг успішності стипендія', 'dovidnyk.html#tab-scholarship');
+  add('Розділ', 'Гуртожиток', 'поселення іногородні', 'dovidnyk.html#tab-dorm');
+  add('Розділ', 'Розклад занять', 'пари час навчання', 'dovidnyk.html#tab-schedule');
+  add('Розділ', 'Студентське життя', 'гуртки волонтерство самоврядування', 'dovidnyk.html#tab-life');
+  add('Розділ', 'Практика', 'бази практик підприємства', 'dovidnyk.html#tab-practice');
+  add('Розділ', 'Подати заявку на вступ', 'форма приймальна комісія документи', 'vstup.html');
+  add('Розділ', 'Контакти', 'адреса телефон карта', 'kontakty.html');
+
+  // кнопка в шапке
+  const btn = document.createElement('button');
+  btn.className = 'hdr-btn search-btn';
+  btn.setAttribute('aria-label', 'Пошук');
+  btn.innerHTML = '🔍';
+  if(right) right.insertBefore(btn, right.firstChild);
+  else header.appendChild(btn);
+
+  // оверлей поиска
+  let overlaySearch = null;
+  function ensureSearch(){
+    if(overlaySearch) return overlaySearch;
+    overlaySearch = document.createElement('div');
+    overlaySearch.className = 'search-overlay';
+    overlaySearch.innerHTML = `
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="Пошук по сайту..." autocomplete="off">
+        <button class="search-close" aria-label="Закрити">✕</button>
+        <div class="search-results"></div>
+      </div>`;
+    document.body.appendChild(overlaySearch);
+
+    const input = overlaySearch.querySelector('.search-input');
+    const results = overlaySearch.querySelector('.search-results');
+
+    function close(){
+      overlaySearch.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    overlaySearch.querySelector('.search-close').addEventListener('click', close);
+    overlaySearch.addEventListener('click', e => { if(e.target === overlaySearch) close(); });
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && overlaySearch.classList.contains('open')) close();
+    });
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if(q.length < 2){
+        results.innerHTML = '<div class="search-hint">Введи мінімум 2 символи</div>';
+        return;
+      }
+      const found = index.filter(item => item.tl.includes(q) || item.text.includes(q)).slice(0, 12);
+      if(!found.length){
+        results.innerHTML = '<div class="search-hint">Нічого не знайдено за запитом «' + input.value.trim() + '»</div>';
+        return;
+      }
+      results.innerHTML = found.map(item => `
+        <a class="search-result" href="${item.url}">
+          <span class="sr-cat">${item.cat}</span>
+          <span class="sr-title">${item.title}</span>
+        </a>`).join('');
+    });
+
+    overlaySearch._input = input;
+    overlaySearch._results = results;
+    return overlaySearch;
+  }
+
+  btn.addEventListener('click', () => {
+    const ov = ensureSearch();
+    ov.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    ov._results.innerHTML = '<div class="search-hint">Спеціальності, новини, викладачі, розділи…</div>';
+    ov._input.value = '';
+    setTimeout(() => ov._input.focus(), 60);
+  });
+})();
+
+// ==== РЕГИСТРАЦИЯ SERVICE WORKER (PWA) ====
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+  });
+}
