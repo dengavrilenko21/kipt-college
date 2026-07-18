@@ -559,7 +559,7 @@ const NEWS = [
 const SETTINGS = {
   "admissionDeadline": "2026-08-15T18:00",
   "admissionTitle": "До конца света",
-  "heroImage": "images/gallery/photo1.webp"
+  "heroImage": "images/gallery/photo1.png"
 };
 
 const SPECIALTIES = {
