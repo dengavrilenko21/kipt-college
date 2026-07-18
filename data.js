@@ -505,7 +505,8 @@ const NEWS = [
 
 const SETTINGS = {
   admissionDeadline: '2026-08-15T18:00',
-  admissionTitle: 'До завершення прийому документів'
+  admissionTitle: 'До завершення прийому документів',
+  heroImage: 'images/gallery/photo1.jpg'
 };
 
 const SPECIALTIES = {

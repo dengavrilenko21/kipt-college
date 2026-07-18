@@ -909,3 +909,32 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
   });
 }
+
+// ==== ФОТО-ФОН ГЛАВНОГО ЭКРАНА ====
+(function initHeroPhoto(){
+  const bg = document.getElementById('heroBg');
+  if(!bg || typeof SETTINGS === 'undefined' || !SETTINGS.heroImage) return;
+  const img = new Image();
+  img.src = SETTINGS.heroImage;
+  img.alt = '';
+  img.onload = () => {
+    bg.appendChild(img);
+    bg.classList.add('loaded');
+  };
+  // если фото нет — остаётся обычный фон со свечениями
+})();
+
+// ==== БЕГУЩАЯ СТРОКА СПЕЦИАЛЬНОСТЕЙ ====
+(function initMarquee(){
+  const strip = document.getElementById('marqueeStrip');
+  if(!strip || typeof SPECIALTIES === 'undefined') return;
+  const names = Object.keys(SPECIALTIES);
+  if(!names.length) return;
+
+  const items = names.map(n =>
+    `<a class="mq-item" href="specialnosti.html">${n}</a><span class="mq-dot">◆</span>`
+  ).join('');
+
+  // две копии подряд для бесшовного цикла
+  strip.innerHTML = `<div class="mq-track">${items}${items}</div>`;
+})();

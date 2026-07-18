@@ -437,6 +437,9 @@ function renderSettingsEditor(){
       <input type="datetime-local" id="set-deadline" value="${escAttr(dl)}">
       <label>Заголовок таймера</label>
       <input id="set-title" value="${escAttr(settings.admissionTitle || '')}">
+      <label>Фото на головному екрані (шлях у репозиторії)</label>
+      <input id="set-hero" value="${escAttr(settings.heroImage || '')}" placeholder="images/gallery/photo1.jpg">
+      <div class="hint" style="margin-top:4px;">Фото має лежати в репозиторії. Якщо файлу немає — головна покаже звичайний фон без фото.</div>
     </div>`;
 }
 
@@ -445,6 +448,7 @@ function collectSettings(){
   if(g('set-deadline') === null) return;
   settings.admissionDeadline = g('set-deadline');
   settings.admissionTitle = g('set-title');
+  settings.heroImage = g('set-hero');
 }
 
 
