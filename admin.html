@@ -104,6 +104,8 @@
       <div class="tab" data-panel="teachers" onclick="showPanel('teachers')">Викладачі</div>
       <div class="tab" data-panel="news" onclick="showPanel('news')">Новости</div>
       <div class="tab" data-panel="specs" onclick="showPanel('specs')">Специальности</div>
+      <div class="tab" data-panel="history" onclick="showPanel('history')">История</div>
+      <div class="tab" data-panel="gallery" onclick="showPanel('gallery')">Галерея</div>
       <div class="tab" data-panel="settings" onclick="showPanel('settings')">Таймер</div>
       <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
     </div>
@@ -124,6 +126,21 @@
     <div class="panel" id="panel-settings"></div>
 
     <div class="panel" id="panel-specs"></div>
+
+    <div class="panel" id="panel-history">
+      <div class="searchrow">
+        <button class="btn" onclick="addHistory()">+ Добавить событие</button>
+      </div>
+      <div id="historyEditList"></div>
+    </div>
+
+    <div class="panel" id="panel-gallery">
+      <div class="searchrow">
+        <button class="btn" onclick="addGallery()">+ Добавить фото</button>
+        <span class="hint" style="margin-top:0;">Файлы загружай в папку <code>images/gallery/</code> репозитория, здесь указывай путь и подпись</span>
+      </div>
+      <div id="galleryEditList"></div>
+    </div>
 
     <div class="panel" id="panel-staff">
       <div class="searchrow">
@@ -155,6 +172,8 @@ let teachers = [];
 let news = [];
 let settings = {};
 let specialties = {};
+let history = [];
+let gallery = [];
 
 // ---------- UTF-8 <-> base64 ----------
 function b64decodeUtf8(b64){
@@ -201,7 +220,9 @@ async function login(){
       TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
       NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
       SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
-      SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {}
+      SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
+      HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
+      GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
     };`)();
     students = parsed.STUDENTS;
     staff = parsed.STAFF;
@@ -210,6 +231,8 @@ async function login(){
     news = parsed.NEWS;
     settings = parsed.SETTINGS || {};
     specialties = parsed.SPECIALTIES || {};
+    history = parsed.HISTORY;
+    gallery = parsed.GALLERY;
 
     if(document.getElementById('rememberToken').checked){
       localStorage.setItem('kipt_admin_token', token);
@@ -223,6 +246,8 @@ async function login(){
     renderNewsEditor();
     renderSettingsEditor();
     renderSpecsEditor();
+    renderHistoryEditor();
+    renderGalleryEditor();
     renderStaffEditor();
   }catch(err){
     st.textContent = 'Ошибка: ' + err.message;
@@ -461,6 +486,90 @@ function collectSpecs(){
   });
 }
 
+
+// ---------- РЕДАКТОР ИСТОРИИ ----------
+function renderHistoryEditor(){
+  collectHistoryOpen();
+  const list = document.getElementById('historyEditList');
+  list.innerHTML = history.map((h, i) => `
+    <div class="card hist-edit" data-i="${i}">
+      <div class="grid2">
+        <div><label>Год / период</label><input data-f="year" value="${escAttr(h.year)}"></div>
+        <div><label>Заголовок</label><input data-f="title" value="${escAttr(h.title)}"></div>
+      </div>
+      <label>Текст события</label>
+      <textarea data-f="text" style="min-height:80px;">${escHtml(h.text)}</textarea>
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeHistory(${i})">Удалить</button>
+      </div>
+    </div>
+  `).join('') || '<p class="hint">Событий пока нет — добавь первое</p>';
+}
+
+function collectHistoryOpen(){
+  document.querySelectorAll('.hist-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !history[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    history[i].year = g('year');
+    history[i].title = g('title');
+    history[i].text = g('text');
+  });
+}
+
+function addHistory(){
+  collectHistoryOpen();
+  history.push({ year: '20XX', title: 'Нова подія', text: 'Опис події...' });
+  renderHistoryEditor();
+}
+
+function removeHistory(i){
+  if(!confirm('Удалить событие «' + history[i].title + '»?')) return;
+  collectHistoryOpen();
+  history.splice(i, 1);
+  renderHistoryEditor();
+}
+
+// ---------- РЕДАКТОР ГАЛЕРЕИ ----------
+function renderGalleryEditor(){
+  collectGalleryOpen();
+  const list = document.getElementById('galleryEditList');
+  list.innerHTML = gallery.map((g, i) => `
+    <div class="card gal-edit" data-i="${i}">
+      <div class="grid2">
+        <div><label>Путь к фото</label><input data-f="img" value="${escAttr(g.img)}" placeholder="images/gallery/photo1.jpg"></div>
+        <div><label>Подпись</label><input data-f="caption" value="${escAttr(g.caption)}"></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeGallery(${i})">Удалить</button>
+      </div>
+    </div>
+  `).join('') || '<p class="hint">Фото пока нет — добавь первое</p>';
+}
+
+function collectGalleryOpen(){
+  document.querySelectorAll('.gal-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !gallery[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    gallery[i].img = g('img');
+    gallery[i].caption = g('caption');
+  });
+}
+
+function addGallery(){
+  collectGalleryOpen();
+  gallery.push({ img: 'images/gallery/', caption: 'Підпис до фото' });
+  renderGalleryEditor();
+}
+
+function removeGallery(i){
+  if(!confirm('Удалить фото «' + gallery[i].caption + '» из галереи? (сам файл в репозитории останется)')) return;
+  collectGalleryOpen();
+  gallery.splice(i, 1);
+  renderGalleryEditor();
+}
+
 // ---------- РЕДАКТОР СОСТАВА ----------
 function renderStaffEditor(){
   collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
@@ -522,6 +631,8 @@ async function saveAll(){
   collectNewsOpen();
   collectSettings();
   collectSpecs();
+  collectHistoryOpen();
+  collectGalleryOpen();
   collectStaffOpen();
 
   const fileText =
@@ -532,7 +643,9 @@ async function saveAll(){
     'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n\n' +
     'const NEWS = ' + JSON.stringify(news, null, 2) + ';\n\n' +
     'const SETTINGS = ' + JSON.stringify(settings, null, 2) + ';\n\n' +
-    'const SPECIALTIES = ' + JSON.stringify(specialties, null, 2) + ';\n';
+    'const SPECIALTIES = ' + JSON.stringify(specialties, null, 2) + ';\n\n' +
+    'const HISTORY = ' + JSON.stringify(history, null, 2) + ';\n\n' +
+    'const GALLERY = ' + JSON.stringify(gallery, null, 2) + ';\n';
 
   btn.disabled = true;
   st.textContent = 'Сохраняем...'; st.className = 'status';

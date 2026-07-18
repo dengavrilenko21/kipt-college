@@ -154,6 +154,86 @@ document.addEventListener('keydown', (e) => {
   `).join('');
 })();
 
+
+
+// ==== РЕНДЕР ИСТОРИИ (таймлайн) ====
+(function renderHistory(){
+  const el = document.getElementById('historyTimeline');
+  if(!el || typeof HISTORY === 'undefined') return;
+  el.innerHTML = HISTORY.map(h => `
+    <div class="tl-item">
+      <div class="tl-year">${h.year}</div>
+      <div class="tl-dot"></div>
+      <div class="tl-body">
+        <div class="tl-title">${h.title}</div>
+        <p class="tl-text">${h.text}</p>
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ==== РЕНДЕР ГАЛЕРЕИ + ЛАЙТБОКС ====
+(function renderGallery(){
+  const grid = document.getElementById('galleryGrid');
+  if(!grid || typeof GALLERY === 'undefined') return;
+
+  grid.innerHTML = GALLERY.map((g, i) => `
+    <figure class="gal-item" data-i="${i}">
+      <img src="${g.img}" alt="${g.caption}" loading="lazy"
+           onerror="this.closest('.gal-item').classList.add('gal-missing')">
+      <figcaption>${g.caption}</figcaption>
+    </figure>
+  `).join('');
+
+  // лайтбокс
+  let box = null;
+  let current = 0;
+
+  function ensureBox(){
+    if(box) return box;
+    box = document.createElement('div');
+    box.className = 'lightbox';
+    box.innerHTML = `
+      <button class="lb-close" aria-label="Закрити">✕</button>
+      <button class="lb-prev" aria-label="Попереднє">‹</button>
+      <img class="lb-img" src="" alt="">
+      <button class="lb-next" aria-label="Наступне">›</button>
+      <div class="lb-caption"></div>`;
+    document.body.appendChild(box);
+
+    function close(){
+      box.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function show(i){
+      current = (i + GALLERY.length) % GALLERY.length;
+      box.querySelector('.lb-img').src = GALLERY[current].img;
+      box.querySelector('.lb-caption').textContent = GALLERY[current].caption;
+    }
+    box.querySelector('.lb-close').addEventListener('click', close);
+    box.querySelector('.lb-prev').addEventListener('click', e => { e.stopPropagation(); show(current - 1); });
+    box.querySelector('.lb-next').addEventListener('click', e => { e.stopPropagation(); show(current + 1); });
+    box.addEventListener('click', e => { if(e.target === box) close(); });
+    document.addEventListener('keydown', e => {
+      if(!box.classList.contains('open')) return;
+      if(e.key === 'Escape') close();
+      if(e.key === 'ArrowLeft') show(current - 1);
+      if(e.key === 'ArrowRight') show(current + 1);
+    });
+    box._show = show;
+    return box;
+  }
+
+  grid.addEventListener('click', e => {
+    const item = e.target.closest('.gal-item');
+    if(!item || item.classList.contains('gal-missing')) return;
+    const b = ensureBox();
+    b._show(parseInt(item.dataset.i));
+    b.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+})();
+
 // ==== ВКЛАДКИ (dovidnyk.html) ====
 function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
@@ -493,6 +573,8 @@ const I18N = {
   "Студентське життя": "Student life",
   "Гордість коледжу": "College pride",
   "Практика": "Internship",
+  "Історія": "History",
+  "Галерея": "Gallery",
   "Пара": "Class",
   "Час": "Time",
   "Пн–Пт": "Mon–Fri",
