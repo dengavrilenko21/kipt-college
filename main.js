@@ -595,3 +595,74 @@ function applyLang(lang){
   [lang, theme, burger].forEach(el => { if(el) right.appendChild(el); });
   header.appendChild(right);
 })();
+
+// ==== МОДАЛКА СПЕЦИАЛЬНОСТЕЙ ====
+(function initSpecModal(){
+  if(typeof SPECIALTIES === 'undefined') return;
+  const rows = document.querySelectorAll('.spec-row');
+  if(!rows.length) return;
+
+  // создаём модалку один раз
+  let specOverlay = null;
+  function ensureOverlay(){
+    if(specOverlay) return specOverlay;
+    specOverlay = document.createElement('div');
+    specOverlay.className = 'modal-overlay';
+    specOverlay.innerHTML = `
+      <div class="modal-card spec-modal-card">
+        <button class="modal-close" aria-label="Закрити">✕</button>
+        <div class="spec-modal-body">
+          <div class="modal-tag">// СПЕЦІАЛЬНІСТЬ</div>
+          <h3 class="modal-name" id="specModalName"></h3>
+          <div class="spec-badge" id="specModalBadge"></div>
+          <p class="modal-block-body" id="specModalDesc" style="margin-bottom:22px;"></p>
+          <div class="modal-block">
+            <div class="modal-block-label">Чого навчають</div>
+            <ul class="modal-achievements" id="specModalLearn"></ul>
+          </div>
+          <div class="modal-block">
+            <div class="modal-block-label">Ким працювати</div>
+            <ul class="modal-achievements" id="specModalCareer"></ul>
+          </div>
+          <a href="vstup.html" class="btn primary" style="margin-top:6px;">Подати заявку →</a>
+        </div>
+      </div>`;
+    document.body.appendChild(specOverlay);
+
+    function close(){
+      specOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    specOverlay.querySelector('.modal-close').addEventListener('click', close);
+    specOverlay.addEventListener('click', e => { if(e.target === specOverlay) close(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+    return specOverlay;
+  }
+
+  rows.forEach(row => {
+    const nameEl = row.querySelector('.spec-name');
+    if(!nameEl) return;
+    const key = nameEl.textContent.trim();
+    const s = SPECIALTIES[key];
+    if(!s) return; // строки без данных (например, рейтинги стипендий) не трогаем
+
+    row.classList.add('spec-clickable');
+
+    row.addEventListener('click', () => {
+      const ov = ensureOverlay();
+      document.getElementById('specModalName').textContent = key;
+      const badge = document.getElementById('specModalBadge');
+      if(s.badge){
+        badge.textContent = s.badge;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+      document.getElementById('specModalDesc').textContent = s.desc;
+      document.getElementById('specModalLearn').innerHTML = s.learn.map(x => `<li>${x}</li>`).join('');
+      document.getElementById('specModalCareer').innerHTML = s.career.map(x => `<li>${x}</li>`).join('');
+      ov.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+})();

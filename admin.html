@@ -103,6 +103,7 @@
       <div class="tab" data-panel="director" onclick="showPanel('director')">Директор</div>
       <div class="tab" data-panel="teachers" onclick="showPanel('teachers')">Викладачі</div>
       <div class="tab" data-panel="news" onclick="showPanel('news')">Новости</div>
+      <div class="tab" data-panel="specs" onclick="showPanel('specs')">Специальности</div>
       <div class="tab" data-panel="settings" onclick="showPanel('settings')">Таймер</div>
       <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
     </div>
@@ -121,6 +122,8 @@
     </div>
 
     <div class="panel" id="panel-settings"></div>
+
+    <div class="panel" id="panel-specs"></div>
 
     <div class="panel" id="panel-staff">
       <div class="searchrow">
@@ -151,6 +154,7 @@ let director = {};
 let teachers = [];
 let news = [];
 let settings = {};
+let specialties = {};
 
 // ---------- UTF-8 <-> base64 ----------
 function b64decodeUtf8(b64){
@@ -196,7 +200,8 @@ async function login(){
       DIRECTOR: typeof DIRECTOR !== 'undefined' ? DIRECTOR : null,
       TEACHERS: typeof TEACHERS !== 'undefined' ? TEACHERS : [],
       NEWS: typeof NEWS !== 'undefined' ? NEWS : [],
-      SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {}
+      SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
+      SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {}
     };`)();
     students = parsed.STUDENTS;
     staff = parsed.STAFF;
@@ -204,6 +209,7 @@ async function login(){
     teachers = parsed.TEACHERS;
     news = parsed.NEWS;
     settings = parsed.SETTINGS || {};
+    specialties = parsed.SPECIALTIES || {};
 
     if(document.getElementById('rememberToken').checked){
       localStorage.setItem('kipt_admin_token', token);
@@ -216,6 +222,7 @@ async function login(){
     renderTeachersEditor();
     renderNewsEditor();
     renderSettingsEditor();
+    renderSpecsEditor();
     renderStaffEditor();
   }catch(err){
     st.textContent = 'Ошибка: ' + err.message;
@@ -415,6 +422,45 @@ function collectSettings(){
   settings.admissionTitle = g('set-title');
 }
 
+
+// ---------- РЕДАКТОР СПЕЦИАЛЬНОСТЕЙ ----------
+function renderSpecsEditor(){
+  const root = document.getElementById('panel-specs');
+  const names = Object.keys(specialties);
+  if(!names.length){
+    root.innerHTML = '<p class="hint">Данные специальностей не найдены в data.js</p>';
+    return;
+  }
+  root.innerHTML = '<div class="hint" style="margin-bottom:16px;">Название специальности — это ключ: оно должно совпадать с текстом строки на странице «Спеціальності». Меняй описание, списки — что угодно, но само название лучше не трогать (иначе клик по строке перестанет находить данные).</div>' +
+  names.map((name, i) => {
+    const s = specialties[name];
+    return `
+    <details class="staff-row spec-edit" data-name="${escAttr(name)}">
+      <summary>${escHtml(name)} <span>${s.badge ? 'с бейджем' : ''}</span></summary>
+      <label>Бейдж (плашка сверху, можно оставить пустым)</label>
+      <input data-f="badge" value="${escAttr(s.badge || '')}">
+      <label>Описание</label>
+      <textarea data-f="desc" style="min-height:80px;">${escHtml(s.desc)}</textarea>
+      <label>Чего учат (по одному в строке)</label>
+      <textarea data-f="learn" style="min-height:90px;">${escHtml((s.learn || []).join('\n'))}</textarea>
+      <label>Кем работать (по одному в строке)</label>
+      <textarea data-f="career" style="min-height:90px;">${escHtml((s.career || []).join('\n'))}</textarea>
+    </details>`;
+  }).join('');
+}
+
+function collectSpecs(){
+  document.querySelectorAll('.spec-edit').forEach(block => {
+    const name = block.dataset.name;
+    if(!specialties[name]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    specialties[name].badge = g('badge');
+    specialties[name].desc = g('desc');
+    specialties[name].learn = g('learn').split('\n').map(x => x.trim()).filter(Boolean);
+    specialties[name].career = g('career').split('\n').map(x => x.trim()).filter(Boolean);
+  });
+}
+
 // ---------- РЕДАКТОР СОСТАВА ----------
 function renderStaffEditor(){
   collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
@@ -475,6 +521,7 @@ async function saveAll(){
   collectTeachers();
   collectNewsOpen();
   collectSettings();
+  collectSpecs();
   collectStaffOpen();
 
   const fileText =
@@ -484,7 +531,8 @@ async function saveAll(){
     'const DIRECTOR = ' + JSON.stringify(director, null, 2) + ';\n\n' +
     'const TEACHERS = ' + JSON.stringify(teachers, null, 2) + ';\n\n' +
     'const NEWS = ' + JSON.stringify(news, null, 2) + ';\n\n' +
-    'const SETTINGS = ' + JSON.stringify(settings, null, 2) + ';\n';
+    'const SETTINGS = ' + JSON.stringify(settings, null, 2) + ';\n\n' +
+    'const SPECIALTIES = ' + JSON.stringify(specialties, null, 2) + ';\n';
 
   btn.disabled = true;
   st.textContent = 'Сохраняем...'; st.className = 'status';

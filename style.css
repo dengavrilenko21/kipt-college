@@ -1474,3 +1474,34 @@ body.light .btn:not(.primary):hover{border-color:rgba(28,27,24,0.35);}
   .cd-num{font-size:24px;}
   .hdr-btn{width:38px; height:38px;}
 }
+
+/* ==== МОДАЛКА СПЕЦИАЛЬНОСТЕЙ ==== */
+.spec-clickable{cursor:pointer;}
+.spec-clickable .spec-name{position:relative; transition:color .2s ease;}
+.spec-clickable:hover .spec-name{color:var(--cyan);}
+.spec-clickable .spec-name::after{
+  content:'↗';
+  margin-left:8px;
+  font-size:13px;
+  color:var(--cyan);
+  opacity:0;
+  transition:opacity .2s ease;
+}
+.spec-clickable:hover .spec-name::after{opacity:1;}
+
+.spec-modal-card{max-width:640px;}
+.spec-modal-body{padding:38px 40px;}
+.spec-badge{
+  display:inline-block;
+  font-size:12px;
+  font-weight:700;
+  color:#0B0B14;
+  background:var(--grad);
+  padding:7px 14px;
+  border-radius:999px;
+  margin:6px 0 18px;
+}
+body.light .spec-badge{color:#0B0B14;}
+@media (max-width: 700px){
+  .spec-modal-body{padding:28px 22px;}
+}
