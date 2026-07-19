@@ -26,9 +26,10 @@
   .sub{color:var(--muted);font-size:14px;margin-bottom:34px;}
   .card{background:var(--glass);border:1px solid var(--glass-border);border-radius:22px;padding:28px;backdrop-filter:blur(10px);margin-bottom:20px;}
   label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);font-weight:700;margin:14px 0 6px;}
-  input,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--ink);
+  input,textarea,select{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--ink);
     font-family:'Manrope',sans-serif;font-size:14px;padding:11px 14px;border-radius:12px;outline:none;transition:border-color .2s;}
-  input:focus,textarea:focus{border-color:var(--violet);}
+  input:focus,textarea:focus,select:focus{border-color:var(--violet);}
+  select option{background:#14141F;color:var(--ink);}
   textarea{resize:vertical;min-height:60px;}
   .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;padding:12px 22px;border-radius:14px;
     border:1px solid var(--glass-border);background:var(--glass);color:var(--ink);cursor:pointer;transition:all .2s;text-decoration:none;}
@@ -687,20 +688,43 @@ function removeZamina(i){
 }
 
 // ---------- РЕДАКТОР ГРУПП ----------
+const COURSE_OPTIONS = [1, 2, 3, 4];
+
+function courseSelect(current){
+  return '<select data-f="course">' + COURSE_OPTIONS.map(c =>
+    `<option value="${c}" ${c === (parseInt(current) || 1) ? 'selected' : ''}>${c} курс</option>`
+  ).join('') + '</select>';
+}
+
 function renderGroupsEditor(){
   collectGroupsOpen();
   const list = document.getElementById('groupsEditList');
-  list.innerHTML = (schedule.groups || []).map((g, i) => `
-    <div class="card grp-edit" data-i="${i}" style="padding:14px 16px;">
+  const groups = schedule.groups || [];
+
+  // сортируем для показа по курсам, но data-i хранит реальный индекс
+  const items = groups.map((g, i) => ({ g, i }));
+  items.sort((a, b) => (a.g.course - b.g.course) || String(a.g.id).localeCompare(b.g.id, 'uk'));
+
+  let html = '';
+  let currentCourse = null;
+  items.forEach(({ g, i }) => {
+    if(g.course !== currentCourse){
+      currentCourse = g.course;
+      html += `<div style="margin:18px 0 10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">${currentCourse} курс</div>`;
+    }
+    html += `
+    <div class="card grp-edit" data-i="${i}" style="padding:14px 16px;margin-bottom:10px;">
       <div class="grid2">
-        <div><label>Назва групи</label><input data-f="id" value="${escAttr(g.id)}"></div>
-        <div><label>Курс (число)</label><input data-f="course" value="${escAttr(String(g.course))}"></div>
+        <div><label>Назва групи</label><input data-f="id" value="${escAttr(g.id)}" placeholder="напр. 311 або 511/611"></div>
+        <div><label>Курс</label>${courseSelect(g.course)}</div>
       </div>
       <div class="row-actions">
-        <button class="btn danger" onclick="removeGroup(${i})">Удалить</button>
+        <button class="btn danger" onclick="removeGroup(${i})">Удалить группу</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  });
+
+  list.innerHTML = html || '<p class="hint">Групп пока нет — добавь первую</p>';
 }
 
 function collectGroupsOpen(){
@@ -708,14 +732,17 @@ function collectGroupsOpen(){
     const i = parseInt(block.dataset.i);
     if(isNaN(i) || !schedule.groups[i]) return;
     const g = f => block.querySelector('[data-f="' + f + '"]').value;
-    schedule.groups[i].id = g('id');
+    schedule.groups[i].id = g('id').trim();
     schedule.groups[i].course = parseInt(g('course')) || 1;
   });
 }
 
 function addGroup(){
   collectGroupsOpen();
-  schedule.groups.push({ id: 'нова', course: 1 });
+  const name = prompt('Назва нової групи (напр. 411 або 511/611):', '');
+  if(name === null) return;
+  const course = parseInt(prompt('Курс (1-4):', '1')) || 1;
+  schedule.groups.push({ id: (name.trim() || 'нова'), course: Math.min(Math.max(course, 1), 4) });
   renderGroupsEditor();
   renderLessonsEditor();
 }
@@ -732,11 +759,12 @@ function removeGroup(i){
 function renderLessonsEditor(){
   collectLessonsOpen();
   const list = document.getElementById('lessonsEditList');
-  list.innerHTML = (schedule.groups || []).map(g => {
+  const sorted = (schedule.groups || []).slice().sort((a, b) => (a.course - b.course) || String(a.id).localeCompare(String(b.id), 'uk'));
+  list.innerHTML = sorted.map(g => {
     const l = (schedule.lessons || {})[g.id] || { chys: '', znam: '' };
     return `
     <details class="staff-row lessons-edit" data-g="${escAttr(g.id)}">
-      <summary>Група ${escHtml(g.id)} <span>${l.chys || l.znam ? 'заповнено' : 'порожньо'}</span></summary>
+      <summary>Група ${escHtml(g.id)} · ${g.course} курс <span>${l.chys || l.znam ? 'заповнено' : 'порожньо'}</span></summary>
       <label>Чисельник</label>
       <textarea data-f="chys" style="min-height:110px;font-family:'IBM Plex Mono',monospace;font-size:12px;">${escHtml(l.chys || '')}</textarea>
       <label>Знаменник</label>
