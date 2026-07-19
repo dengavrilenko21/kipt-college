@@ -11,7 +11,9 @@ const __BASE__ = {
   SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
   SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
   HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
-  GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
+  GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : [],
+  SCHEDULE: typeof SCHEDULE !== 'undefined' ? SCHEDULE : { groups: [], bells: [], lessons: {} },
+  ZAMINY: typeof ZAMINY !== 'undefined' ? ZAMINY : { date: '', note: '', items: [] }
 };
 
 (async function(){
@@ -31,6 +33,8 @@ const __BASE__ = {
   const SPECIALTIES = __pick('SPECIALTIES');
   const HISTORY = __pick('HISTORY');
   const GALLERY = __pick('GALLERY');
+  const SCHEDULE = __pick('SCHEDULE');
+  const ZAMINY = __pick('ZAMINY');
 
 // ==================================================
 // ОБЩАЯ ЛОГИКА САЙТА (работает на всех страницах)
@@ -863,7 +867,8 @@ function applyLang(lang){
   // статичные разделы
   add('Розділ', 'Стипендія', 'рейтинг успішності стипендія', 'dovidnyk.html#tab-scholarship');
   add('Розділ', 'Гуртожиток', 'поселення іногородні', 'dovidnyk.html#tab-dorm');
-  add('Розділ', 'Розклад занять', 'пари час навчання', 'dovidnyk.html#tab-schedule');
+  add('Розділ', 'Розклад занять', 'пари час навчання групи', 'rozklad.html');
+  add('Розділ', 'Заміни у розкладі', 'заміни на завтра сьогодні', 'rozklad.html');
   add('Розділ', 'Студентське життя', 'гуртки волонтерство самоврядування', 'dovidnyk.html#tab-life');
   add('Розділ', 'Практика', 'бази практик підприємства', 'dovidnyk.html#tab-practice');
   add('Розділ', 'Подати заявку на вступ', 'форма приймальна комісія документи', 'vstup.html');
@@ -972,6 +977,140 @@ if('serviceWorker' in navigator){
   // две копии подряд для бесшовного цикла
   strip.innerHTML = `<div class="mq-track">${items}${items}</div>`;
 })();
+
+
+  // ==== СТРАНИЦА РОЗКЛАДУ ====
+  (function initRozklad(){
+    const picker = document.getElementById('grpPicker');
+    if(!picker || typeof SCHEDULE === 'undefined') return;
+
+    const DAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ'];
+    const DAY_NAMES = { 'ПН':'Понеділок', 'ВТ':'Вівторок', 'СР':'Середа', 'ЧТ':'Четвер', 'ПТ':"П'ятниця" };
+
+    // --- заміни ---
+    const zc = document.getElementById('zaminyCard');
+    if(zc && typeof ZAMINY !== 'undefined' && ZAMINY.items && ZAMINY.items.length){
+      const dd = new Date(ZAMINY.date);
+      const dayNames = ['Неділя','Понеділок','Вівторок','Середа','Четвер',"П'ятниця",'Субота'];
+      const dateStr = isNaN(dd) ? ZAMINY.date
+        : dd.toLocaleDateString('uk-UA', {day:'numeric', month:'long'}) + ' — ' + dayNames[dd.getDay()];
+      zc.innerHTML = `
+        <div class="zaminy-head">
+          <span class="zaminy-badge">ЗАМІНИ</span>
+          <span class="zaminy-date">на ${dateStr}</span>
+        </div>
+        ${ZAMINY.note ? `<p class="zaminy-note">${ZAMINY.note}</p>` : ''}
+        <div class="zaminy-list">
+          ${ZAMINY.items.map(z => `
+            <div class="zaminy-item">
+              <span class="z-group">${z.group}</span>
+              <span class="z-pair">${z.pair} пара</span>
+              <span class="z-text">${z.text}</span>
+            </div>`).join('')}
+        </div>`;
+    } else if(zc){
+      zc.innerHTML = '<div class="zaminy-head"><span class="zaminy-badge">ЗАМІНИ</span><span class="zaminy-date">на сьогодні замін немає</span></div>';
+    }
+
+    // --- дзвінки та аудиторії ---
+    const bells = document.querySelector('#bellsTable tbody');
+    if(bells && SCHEDULE.bells){
+      bells.innerHTML = SCHEDULE.bells.map(b => `<tr><td>${b[0]}</td><td>${b[1]}</td></tr>`).join('');
+    }
+    const rooms = document.getElementById('roomsNote');
+    if(rooms && SCHEDULE.rooms) rooms.textContent = SCHEDULE.rooms;
+
+    // --- тип недели: авто по номеру недели ---
+    function weekNumber(d){
+      const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const day = t.getUTCDay() || 7;
+      t.setUTCDate(t.getUTCDate() + 4 - day);
+      const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+      return Math.ceil((((t - y0) / 86400000) + 1) / 7);
+    }
+    let weekType = (weekNumber(new Date()) % 2 === 1) ? 'chys' : 'znam';
+    let currentGroup = null;
+
+    // --- парсер формата расписания ---
+    function parseLessons(text){
+      const map = {};
+      (text || '').split('\n').forEach(line => {
+        const m = line.match(/^\s*(ПН|ВТ|СР|ЧТ|ПТ)\s*:\s*(.*)$/);
+        if(m) map[m[1]] = m[2].split(';').map(x => x.trim());
+      });
+      return map;
+    }
+
+    // --- рендер выбора группы (по курсам) ---
+    const byCourse = {};
+    (SCHEDULE.groups || []).forEach(g => {
+      (byCourse[g.course] = byCourse[g.course] || []).push(g);
+    });
+    picker.innerHTML = Object.keys(byCourse).sort().map(c => `
+      <div class="grp-course">
+        <span class="grp-course-label">${c} курс</span>
+        <div class="grp-btns">
+          ${byCourse[c].map(g => `<button class="grp-btn" data-g="${g.id}">${g.id}</button>`).join('')}
+        </div>
+      </div>`).join('');
+
+    // --- переключатель недели ---
+    const wt = document.getElementById('weekToggle');
+    function renderWeekToggle(){
+      wt.innerHTML = `
+        <button class="wk-btn ${weekType === 'chys' ? 'active' : ''}" data-w="chys">Чисельник</button>
+        <button class="wk-btn ${weekType === 'znam' ? 'active' : ''}" data-w="znam">Знаменник</button>
+        <span class="wk-hint">цього тижня — ${(weekNumber(new Date()) % 2 === 1) ? 'чисельник' : 'знаменник'}</span>`;
+      wt.querySelectorAll('.wk-btn').forEach(b => b.addEventListener('click', () => {
+        weekType = b.dataset.w;
+        renderWeekToggle();
+        renderSchedule();
+      }));
+    }
+    renderWeekToggle();
+
+    // --- рендер таблицы группы ---
+    const tableEl = document.getElementById('scheduleTable');
+    function renderSchedule(){
+      if(!currentGroup){
+        tableEl.innerHTML = '<p class="schedule-note" style="padding:20px 0;">Обери групу вище, щоб побачити розклад ↑</p>';
+        return;
+      }
+      const data = (SCHEDULE.lessons || {})[currentGroup];
+      const map = data ? parseLessons(data[weekType]) : {};
+      const hasAny = DAYS.some(d => map[d] && map[d].some(x => x && x !== '—'));
+
+      if(!hasAny){
+        tableEl.innerHTML = `<p class="schedule-note" style="padding:20px 0;">Розклад для групи ${currentGroup} буде додано найближчим часом.</p>`;
+        return;
+      }
+
+      tableEl.innerHTML = `
+        <div class="grp-current">Група <b>${currentGroup}</b> · ${weekType === 'chys' ? 'чисельник' : 'знаменник'}</div>
+        <div class="day-grid">
+          ${DAYS.map(d => {
+            const pairs = map[d] || [];
+            return `
+              <div class="day-card">
+                <div class="day-name">${DAY_NAMES[d]}</div>
+                ${pairs.length ? pairs.map((p, i) => `
+                  <div class="pair-row ${(!p || p === '—') ? 'pair-empty' : ''}">
+                    <span class="pair-num">${i + 1}</span>
+                    <span class="pair-text">${(!p || p === '—') ? 'вікно' : p}</span>
+                  </div>`).join('') : '<div class="pair-row pair-empty"><span class="pair-text">занять немає</span></div>'}
+              </div>`;
+          }).join('')}
+        </div>`;
+    }
+    renderSchedule();
+
+    picker.querySelectorAll('.grp-btn').forEach(b => b.addEventListener('click', () => {
+      currentGroup = b.dataset.g;
+      picker.querySelectorAll('.grp-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      renderSchedule();
+    }));
+  })();
 
   // ==== ЭКСПОРТ ФУНКЦИЙ ДЛЯ INLINE-ОБРАБОТЧИКОВ В HTML ====
   if(typeof switchTab === 'function') window.switchTab = switchTab;

@@ -1932,3 +1932,172 @@ body.light .hero-bg::after{
   .mq-item{font-size:12px;}
   .mq-track{gap:18px; padding-right:18px;}
 }
+
+/* ==== СТРАНИЦА РОЗКЛАДУ ==== */
+.rozklad-section{
+  position:relative;
+  max-width:1280px;
+  margin:0 auto;
+  padding:60px 48px 70px;
+}
+
+/* заміни */
+.zaminy-card{
+  background:
+    radial-gradient(400px 200px at 0% 0%, rgba(139,92,246,0.2), transparent 70%),
+    var(--glass);
+  border:1px solid rgba(139,92,246,0.35);
+  border-radius:22px;
+  padding:26px 28px;
+  margin-bottom:34px;
+  backdrop-filter:blur(10px);
+}
+.zaminy-head{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+.zaminy-badge{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  color:#0B0B14;
+  background:var(--grad);
+  padding:7px 14px;
+  border-radius:999px;
+}
+.zaminy-date{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:17px;
+  font-weight:700;
+}
+.zaminy-note{font-size:13px; color:var(--muted); margin-top:10px;}
+.zaminy-list{display:flex; flex-direction:column; gap:8px; margin-top:16px;}
+.zaminy-item{
+  display:grid;
+  grid-template-columns:90px 80px 1fr;
+  gap:14px;
+  align-items:baseline;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:14px;
+}
+.z-group{
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:700;
+  color:var(--cyan);
+}
+.z-pair{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color:var(--muted);
+}
+.z-text{color:var(--ink); line-height:1.5;}
+
+/* выбор группы */
+.grp-picker{display:flex; flex-direction:column; gap:16px; margin-bottom:26px;}
+.grp-course{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+.grp-course-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--muted);
+  min-width:64px;
+}
+.grp-btns{display:flex; gap:8px; flex-wrap:wrap;}
+.grp-btn{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:14px;
+  font-weight:700;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  color:var(--muted);
+  padding:10px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.grp-btn:hover{color:var(--ink); border-color:rgba(255,255,255,0.3);}
+.grp-btn.active{
+  color:#0B0B14;
+  background:var(--grad);
+  border-color:transparent;
+  box-shadow:0 6px 20px rgba(139,92,246,0.35);
+}
+
+/* переключатель недели */
+.week-toggle{display:flex; align-items:center; gap:10px; margin-bottom:26px; flex-wrap:wrap;}
+.wk-btn{
+  font-family:'Manrope', sans-serif;
+  font-size:13.5px;
+  font-weight:700;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  color:var(--muted);
+  padding:10px 20px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.wk-btn.active{color:#0B0B14; background:var(--grad); border-color:transparent;}
+.wk-hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* таблица дней */
+.grp-current{
+  font-size:15px;
+  color:var(--muted);
+  margin-bottom:18px;
+}
+.grp-current b{color:var(--ink); font-family:'Space Grotesk', sans-serif;}
+.day-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+  gap:14px;
+}
+.day-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:18px;
+  backdrop-filter:blur(8px);
+}
+.day-name{
+  font-family:'Space Grotesk', sans-serif;
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.pair-row{
+  display:flex;
+  gap:10px;
+  padding:8px 0;
+  font-size:13px;
+  line-height:1.5;
+  border-bottom:1px dashed var(--line);
+}
+.pair-row:last-child{border-bottom:none;}
+.pair-num{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  color:var(--cyan);
+  min-width:14px;
+  padding-top:2px;
+}
+.pair-text{color:var(--ink);}
+.pair-empty .pair-text{color:var(--muted); font-style:italic;}
+
+@media (max-width: 860px){
+  .rozklad-section{padding:40px 22px 60px;}
+  .zaminy-item{grid-template-columns:1fr; gap:4px;}
+  .day-grid{grid-template-columns:1fr;}
+}

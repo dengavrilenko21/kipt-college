@@ -106,6 +106,7 @@
       <div class="tab" data-panel="specs" onclick="showPanel('specs')">Специальности</div>
       <div class="tab" data-panel="history" onclick="showPanel('history')">История</div>
       <div class="tab" data-panel="gallery" onclick="showPanel('gallery')">Галерея</div>
+      <div class="tab" data-panel="rozklad" onclick="showPanel('rozklad')">Розклад/Заміни</div>
       <div class="tab" data-panel="settings" onclick="showPanel('settings')">Таймер</div>
       <div class="tab" data-panel="staff" onclick="showPanel('staff')">Весь колектив</div>
     </div>
@@ -124,6 +125,30 @@
     </div>
 
     <div class="panel" id="panel-settings"></div>
+
+    <div class="panel" id="panel-rozklad">
+      <div class="card">
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;">Заміни</h3>
+        <div class="grid2">
+          <div><label>Дата замін (ГГГГ-ММ-ДД)</label><input id="zam-date"></div>
+          <div><label>Примітка</label><input id="zam-note"></div>
+        </div>
+        <div style="margin-top:14px;"><button class="btn" onclick="addZamina()">+ Добавить замену</button></div>
+        <div id="zaminyEditList" style="margin-top:14px;"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;">Группы</h3>
+        <div style="margin:10px 0;"><button class="btn" onclick="addGroup()">+ Добавить группу</button></div>
+        <div id="groupsEditList"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;">Расписание групп</h3>
+        <div class="hint" style="margin-top:6px;">Формат: каждая строка — день. <code>ПН: Предмет — Викладач (ауд); Предмет 2; —</code><br>Пары разделяются <code>;</code> по порядку (1, 2, 3...), <code>—</code> = окно. Дни: ПН ВТ СР ЧТ ПТ.</div>
+        <div id="lessonsEditList" style="margin-top:14px;"></div>
+      </div>
+    </div>
 
     <div class="panel" id="panel-specs"></div>
 
@@ -175,6 +200,8 @@ let settings = {};
 let specialties = {};
 let history = [];
 let gallery = [];
+let schedule = { groups: [], bells: [], rooms: '', lessons: {} };
+let zaminy = { date: '', note: '', items: [] };
 
 // ---------- UTF-8 <-> base64 ----------
 function b64decodeUtf8(b64){
@@ -230,7 +257,9 @@ async function login(){
         SETTINGS: typeof SETTINGS !== 'undefined' ? SETTINGS : {},
         SPECIALTIES: typeof SPECIALTIES !== 'undefined' ? SPECIALTIES : {},
         HISTORY: typeof HISTORY !== 'undefined' ? HISTORY : [],
-        GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : []
+        GALLERY: typeof GALLERY !== 'undefined' ? GALLERY : [],
+        SCHEDULE: typeof SCHEDULE !== 'undefined' ? SCHEDULE : null,
+        ZAMINY: typeof ZAMINY !== 'undefined' ? ZAMINY : null
       };`)();
     } else {
       st.textContent = 'Ошибка ' + resC.status + ' — проверь токен и права (Contents: Read and write).';
@@ -246,6 +275,24 @@ async function login(){
     specialties = parsed.SPECIALTIES || {};
     history = parsed.HISTORY;
     gallery = parsed.GALLERY;
+    schedule = parsed.SCHEDULE || schedule;
+    zaminy = parsed.ZAMINY || zaminy;
+
+    // если content.json старый и не содержит расписания — дотягиваем дефолты из data.js
+    if(!parsed.SCHEDULE || !parsed.ZAMINY){
+      try{
+        const resF = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FALLBACK_FILE}`, { headers: hdrs });
+        if(resF.ok){
+          const jf = await resF.json();
+          const fb = new Function(b64decodeUtf8(jf.content) + `;return {
+            SCHEDULE: typeof SCHEDULE !== 'undefined' ? SCHEDULE : null,
+            ZAMINY: typeof ZAMINY !== 'undefined' ? ZAMINY : null
+          };`)();
+          if(!parsed.SCHEDULE && fb.SCHEDULE) schedule = fb.SCHEDULE;
+          if(!parsed.ZAMINY && fb.ZAMINY) zaminy = fb.ZAMINY;
+        }
+      }catch(e){ console.warn('fallback schedule load failed', e); }
+    }
 
     if(document.getElementById('rememberToken').checked){
       localStorage.setItem('kipt_admin_token', token);
@@ -261,6 +308,9 @@ async function login(){
     renderSpecsEditor();
     renderHistoryEditor();
     renderGalleryEditor();
+    renderZaminyEditor();
+    renderGroupsEditor();
+    renderLessonsEditor();
     renderStaffEditor();
   }catch(err){
     st.textContent = 'Ошибка: ' + err.message;
@@ -587,6 +637,126 @@ function removeGallery(i){
   renderGalleryEditor();
 }
 
+
+// ---------- РЕДАКТОР ЗАМІН ----------
+function renderZaminyEditor(){
+  document.getElementById('zam-date').value = zaminy.date || '';
+  document.getElementById('zam-note').value = zaminy.note || '';
+  collectZaminyOpen();
+  const list = document.getElementById('zaminyEditList');
+  list.innerHTML = (zaminy.items || []).map((z, i) => `
+    <div class="card zam-edit" data-i="${i}" style="padding:16px;">
+      <div class="grid2">
+        <div><label>Група</label><input data-f="group" value="${escAttr(z.group)}"></div>
+        <div><label>Пара (номер)</label><input data-f="pair" value="${escAttr(z.pair)}"></div>
+      </div>
+      <label>Що змінюється</label>
+      <input data-f="text" value="${escAttr(z.text)}">
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeZamina(${i})">Удалить</button>
+      </div>
+    </div>
+  `).join('') || '<p class="hint">Замін немає</p>';
+}
+
+function collectZaminyOpen(){
+  const gd = document.getElementById('zam-date');
+  const gn = document.getElementById('zam-note');
+  if(gd) zaminy.date = gd.value;
+  if(gn) zaminy.note = gn.value;
+  document.querySelectorAll('.zam-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !zaminy.items[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    zaminy.items[i].group = g('group');
+    zaminy.items[i].pair = g('pair');
+    zaminy.items[i].text = g('text');
+  });
+}
+
+function addZamina(){
+  collectZaminyOpen();
+  zaminy.items.unshift({ group: '', pair: '1', text: '' });
+  renderZaminyEditor();
+}
+
+function removeZamina(i){
+  collectZaminyOpen();
+  zaminy.items.splice(i, 1);
+  renderZaminyEditor();
+}
+
+// ---------- РЕДАКТОР ГРУПП ----------
+function renderGroupsEditor(){
+  collectGroupsOpen();
+  const list = document.getElementById('groupsEditList');
+  list.innerHTML = (schedule.groups || []).map((g, i) => `
+    <div class="card grp-edit" data-i="${i}" style="padding:14px 16px;">
+      <div class="grid2">
+        <div><label>Назва групи</label><input data-f="id" value="${escAttr(g.id)}"></div>
+        <div><label>Курс (число)</label><input data-f="course" value="${escAttr(String(g.course))}"></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn danger" onclick="removeGroup(${i})">Удалить</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function collectGroupsOpen(){
+  document.querySelectorAll('.grp-edit').forEach(block => {
+    const i = parseInt(block.dataset.i);
+    if(isNaN(i) || !schedule.groups[i]) return;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    schedule.groups[i].id = g('id');
+    schedule.groups[i].course = parseInt(g('course')) || 1;
+  });
+}
+
+function addGroup(){
+  collectGroupsOpen();
+  schedule.groups.push({ id: 'нова', course: 1 });
+  renderGroupsEditor();
+  renderLessonsEditor();
+}
+
+function removeGroup(i){
+  if(!confirm('Удалить группу «' + schedule.groups[i].id + '»?')) return;
+  collectGroupsOpen();
+  schedule.groups.splice(i, 1);
+  renderGroupsEditor();
+  renderLessonsEditor();
+}
+
+// ---------- РЕДАКТОР УРОКОВ ----------
+function renderLessonsEditor(){
+  collectLessonsOpen();
+  const list = document.getElementById('lessonsEditList');
+  list.innerHTML = (schedule.groups || []).map(g => {
+    const l = (schedule.lessons || {})[g.id] || { chys: '', znam: '' };
+    return `
+    <details class="staff-row lessons-edit" data-g="${escAttr(g.id)}">
+      <summary>Група ${escHtml(g.id)} <span>${l.chys || l.znam ? 'заповнено' : 'порожньо'}</span></summary>
+      <label>Чисельник</label>
+      <textarea data-f="chys" style="min-height:110px;font-family:'IBM Plex Mono',monospace;font-size:12px;">${escHtml(l.chys || '')}</textarea>
+      <label>Знаменник</label>
+      <textarea data-f="znam" style="min-height:110px;font-family:'IBM Plex Mono',monospace;font-size:12px;">${escHtml(l.znam || '')}</textarea>
+    </details>`;
+  }).join('');
+}
+
+function collectLessonsOpen(){
+  document.querySelectorAll('.lessons-edit').forEach(block => {
+    const gid = block.dataset.g;
+    const g = f => block.querySelector('[data-f="' + f + '"]').value;
+    if(!schedule.lessons) schedule.lessons = {};
+    const chys = g('chys').trim();
+    const znam = g('znam').trim();
+    if(chys || znam) schedule.lessons[gid] = { chys, znam };
+    else delete schedule.lessons[gid];
+  });
+}
+
 // ---------- РЕДАКТОР СОСТАВА ----------
 function renderStaffEditor(){
   collectStaffOpen(); // сохранить незакрытые правки перед перерисовкой
@@ -650,6 +820,9 @@ async function saveAll(){
   collectSpecs();
   collectHistoryOpen();
   collectGalleryOpen();
+  collectZaminyOpen();
+  collectGroupsOpen();
+  collectLessonsOpen();
   collectStaffOpen();
 
   const allData = {
@@ -661,7 +834,9 @@ async function saveAll(){
     SETTINGS: settings,
     SPECIALTIES: specialties,
     HISTORY: history,
-    GALLERY: gallery
+    GALLERY: gallery,
+    SCHEDULE: schedule,
+    ZAMINY: zaminy
   };
   const fileText = JSON.stringify(allData, null, 2);
 
