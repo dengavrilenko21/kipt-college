@@ -1031,7 +1031,7 @@ if('serviceWorker' in navigator){
     let weekType = (weekNumber(new Date()) % 2 === 1) ? 'chys' : 'znam';
     let currentGroup = null;
 
-    // --- парсер формата расписания ---
+    // --- парсер старого текстового формата расписания ---
     function parseLessons(text){
       const map = {};
       (text || '').split('\n').forEach(line => {
@@ -1039,6 +1039,20 @@ if('serviceWorker' in navigator){
         if(m) map[m[1]] = m[2].split(';').map(x => x.trim());
       });
       return map;
+    }
+
+    // --- нормализатор: новый структурный формат (d: дни->пары) или старый текст ---
+    function normalizeLessons(data, wt){
+      if(!data) return DAYS.map(() => []);
+      if(Array.isArray(data.d)){
+        return DAYS.map((_, di) => (data.d[di] || []).map(p => {
+          if(!p) return '';
+          const c = (p.c || '').trim(), z = (p.z || '').trim();
+          return wt === 'znam' ? (z || c) : c;
+        }));
+      }
+      const map = parseLessons(data[wt]);
+      return DAYS.map(d => map[d] || []);
     }
 
     // --- рендер выбора группы (по курсам) ---
@@ -1077,19 +1091,20 @@ if('serviceWorker' in navigator){
         return;
       }
       const data = (SCHEDULE.lessons || {})[currentGroup];
-      const map = data ? parseLessons(data[weekType]) : {};
-      const hasAny = DAYS.some(d => map[d] && map[d].some(x => x && x !== '—'));
+      const days = normalizeLessons(data, weekType);
+      const hasAny = days.some(arr => arr.some(x => x && x !== '—'));
 
       if(!hasAny){
         tableEl.innerHTML = `<p class="schedule-note" style="padding:20px 0;">Розклад для групи ${currentGroup} буде додано найближчим часом.</p>`;
         return;
       }
 
+      const ker = (data && data.kerivnyk) ? ` · кл. керівник: ${data.kerivnyk}` : '';
       tableEl.innerHTML = `
-        <div class="grp-current">Група <b>${currentGroup}</b> · ${weekType === 'chys' ? 'чисельник' : 'знаменник'}</div>
+        <div class="grp-current">Група <b>${currentGroup}</b> · ${weekType === 'chys' ? 'чисельник' : 'знаменник'}${ker}</div>
         <div class="day-grid">
-          ${DAYS.map(d => {
-            const pairs = map[d] || [];
+          ${DAYS.map((d, di) => {
+            const pairs = days[di] || [];
             return `
               <div class="day-card">
                 <div class="day-name">${DAY_NAMES[d]}</div>

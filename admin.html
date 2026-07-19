@@ -30,6 +30,10 @@
     font-family:'Manrope',sans-serif;font-size:14px;padding:11px 14px;border-radius:12px;outline:none;transition:border-color .2s;}
   input:focus,textarea:focus,select:focus{border-color:var(--violet);}
   select option{background:#14141F;color:var(--ink);}
+  .pair-edit-row{display:grid;grid-template-columns:22px 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px;}
+  .pair-edit-row > span{color:var(--muted);font-size:12px;text-align:right;font-family:'IBM Plex Mono',monospace;}
+  .pair-edit-row input{padding:9px 12px;font-size:13px;}
+  .pair-edit-head{display:grid;grid-template-columns:22px 1fr 1fr;gap:8px;margin:6px 0 4px;}
   textarea{resize:vertical;min-height:60px;}
   .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;padding:12px 22px;border-radius:14px;
     border:1px solid var(--glass-border);background:var(--glass);color:var(--ink);cursor:pointer;transition:all .2s;text-decoration:none;}
@@ -756,19 +760,69 @@ function removeGroup(i){
 }
 
 // ---------- РЕДАКТОР УРОКОВ ----------
+const LDAYS = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', "П'ятниця"];
+const LKEYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ'];
+const PAIRS_PER_DAY = 5;
+
+// конвертация старого текстового формата в структурный (дни -> пары)
+function oldToStruct(l){
+  const parse = t => {
+    const m = {};
+    (t || '').split('\n').forEach(line => {
+      const r = line.match(/^\s*(ПН|ВТ|СР|ЧТ|ПТ)\s*:\s*(.*)$/);
+      if(r) m[r[1]] = r[2].split(';').map(x => x.trim());
+    });
+    return m;
+  };
+  const c = parse(l.chys), z = parse(l.znam);
+  return {
+    kerivnyk: l.kerivnyk || '',
+    d: LKEYS.map(k => {
+      const cc = c[k] || [], zz = z[k] || [];
+      return Array.from({ length: PAIRS_PER_DAY }, (_, i) => ({
+        c: (cc[i] && cc[i] !== '—') ? cc[i] : '',
+        z: (zz[i] && zz[i] !== '—') ? zz[i] : ''
+      }));
+    })
+  };
+}
+
+function emptyStruct(){
+  return { kerivnyk: '', d: LKEYS.map(() => Array.from({ length: PAIRS_PER_DAY }, () => ({ c: '', z: '' }))) };
+}
+
 function renderLessonsEditor(){
   collectLessonsOpen();
   const list = document.getElementById('lessonsEditList');
   const sorted = (schedule.groups || []).slice().sort((a, b) => (a.course - b.course) || String(a.id).localeCompare(String(b.id), 'uk'));
+
   list.innerHTML = sorted.map(g => {
-    const l = (schedule.lessons || {})[g.id] || { chys: '', znam: '' };
+    let l = (schedule.lessons || {})[g.id];
+    if(l && !Array.isArray(l.d)){ l = oldToStruct(l); schedule.lessons[g.id] = l; }
+    if(!l) l = emptyStruct();
+    const filled = l.d.some(day => day.some(p => p && (p.c || p.z)));
+
     return `
     <details class="staff-row lessons-edit" data-g="${escAttr(g.id)}">
-      <summary>Група ${escHtml(g.id)} · ${g.course} курс <span>${l.chys || l.znam ? 'заповнено' : 'порожньо'}</span></summary>
-      <label>Чисельник</label>
-      <textarea data-f="chys" style="min-height:110px;font-family:'IBM Plex Mono',monospace;font-size:12px;">${escHtml(l.chys || '')}</textarea>
-      <label>Знаменник</label>
-      <textarea data-f="znam" style="min-height:110px;font-family:'IBM Plex Mono',monospace;font-size:12px;">${escHtml(l.znam || '')}</textarea>
+      <summary>Група ${escHtml(g.id)} · ${g.course} курс <span>${filled ? 'заповнено' : 'порожньо'}</span></summary>
+      <label>Класний керівник</label>
+      <input data-f="ker" value="${escAttr(l.kerivnyk || '')}" placeholder="Прізвище І.Б.">
+      <div class="hint" style="margin-top:8px;">Формат пари: <code>Предмет — Викладач (ауд.)</code>. Друга колонка — якщо на знаменнику інша пара; порожня = так само, як чисельник. Порожня пара = вікно.</div>
+      ${LDAYS.map((dn, di) => {
+        const day = l.d[di] || [];
+        return `
+        <div style="margin-top:16px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;">${dn}</div>
+        <div class="pair-edit-head"><span></span><span class="hint" style="margin:0;">чисельник</span><span class="hint" style="margin:0;">знаменник (якщо інакше)</span></div>
+        ${Array.from({ length: PAIRS_PER_DAY }, (_, pi) => {
+          const p = day[pi] || { c: '', z: '' };
+          return `
+          <div class="pair-edit-row">
+            <span>${pi + 1}</span>
+            <input data-d="${di}" data-p="${pi}" data-t="c" value="${escAttr(p.c || '')}" placeholder="—">
+            <input data-d="${di}" data-p="${pi}" data-t="z" value="${escAttr(p.z || '')}" placeholder="">
+          </div>`;
+        }).join('')}`;
+      }).join('')}
     </details>`;
   }).join('');
 }
@@ -776,11 +830,20 @@ function renderLessonsEditor(){
 function collectLessonsOpen(){
   document.querySelectorAll('.lessons-edit').forEach(block => {
     const gid = block.dataset.g;
-    const g = f => block.querySelector('[data-f="' + f + '"]').value;
     if(!schedule.lessons) schedule.lessons = {};
-    const chys = g('chys').trim();
-    const znam = g('znam').trim();
-    if(chys || znam) schedule.lessons[gid] = { chys, znam };
+    const kerEl = block.querySelector('[data-f="ker"]');
+    if(!kerEl) return;
+
+    const struct = emptyStruct();
+    struct.kerivnyk = kerEl.value.trim();
+    block.querySelectorAll('input[data-d]').forEach(inp => {
+      const di = parseInt(inp.dataset.d), pi = parseInt(inp.dataset.p);
+      if(isNaN(di) || isNaN(pi) || !struct.d[di] || !struct.d[di][pi]) return;
+      struct.d[di][pi][inp.dataset.t] = inp.value.trim();
+    });
+
+    const filled = struct.kerivnyk || struct.d.some(day => day.some(p => p.c || p.z));
+    if(filled) schedule.lessons[gid] = struct;
     else delete schedule.lessons[gid];
   });
 }
